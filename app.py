@@ -17,81 +17,90 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS PREMIUM (BASEADO NA LOGO) ---
-def aplicar_estilo_premium():
+# --- ESTILO CSS (VISUAL MARROM & DOURADO) ---
+def aplicar_estilo_visual():
     st.markdown("""
     <style>
-        /* Importar fonte elegante (opcional, usa a do sistema se falhar) */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+        /* Importar fonte elegante */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
         
         html, body, [class*="css"] {
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Cor de Fundo Geral - Clean */
+        /* Fundo Geral */
         .stApp {
-            background-color: #FAFAFA; /* Off-white muito suave */
+            background-color: #FDFBF7; /* Creme muito suave */
         }
 
-        /* --- SIDEBAR (Barra Lateral) --- */
-        [data-testid="stSidebar"] {
-            background-color: #2C2420; /* Marrom Café da Logo */
-        }
-        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
-            color: #E0E0E0 !important; /* Texto claro no menu */
-        }
-
-        /* --- BOTÕES DO MENU PRINCIPAL (Cartões Dourados) --- */
+        /* --- BOTÕES DO MENU PRINCIPAL (Grandes e Centrais) --- */
         div[data-testid="column"] .stButton button {
-            height: 140px !important;
+            height: 150px !important;
             width: 100% !important;
             background-color: #FFFFFF !important;
-            color: #2C2420 !important; /* Texto Marrom */
-            font-size: 20px !important;
+            color: #3E3228 !important; /* Marrom Café */
+            font-size: 22px !important;
             font-weight: 600 !important;
-            border: 2px solid #C5A065 !important; /* Borda Dourada */
-            border-radius: 12px !important;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+            border: 2px solid #D4AF37 !important; /* Dourado */
+            border-radius: 15px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
             transition: all 0.3s ease !important;
-            text-transform: uppercase !important;
-            letter-spacing: 1px !important;
+            white-space: normal !important;
         }
         
         div[data-testid="column"] .stButton button:hover {
-            background-color: #C5A065 !important; /* Fundo Dourado ao passar o mouse */
+            background-color: #D4AF37 !important; /* Fundo Dourado ao passar mouse */
             color: #FFFFFF !important; /* Texto Branco */
-            transform: translateY(-5px) !important;
-            box-shadow: 0 10px 15px rgba(197, 160, 101, 0.3) !important;
+            transform: scale(1.02) !important;
+            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.4) !important;
+            border-color: #3E3228 !important;
         }
 
-        /* --- BOTÕES NORMAIS (Pequenos) --- */
-        .stButton button {
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        /* Botão Primário (Sair, Salvar) */
+        /* --- BOTÕES DE AÇÃO (Salvar, Voltar) --- */
         button[kind="primary"] {
-            background-color: #C5A065 !important;
-            border-color: #C5A065 !important;
-            color: white !important;
+            background-color: #3E3228 !important; /* Marrom */
+            border-color: #3E3228 !important;
+            color: #D4AF37 !important; /* Texto Dourado */
+            font-weight: bold !important;
         }
         button[kind="primary"]:hover {
-            background-color: #B08D55 !important;
-            border-color: #B08D55 !important;
-        }
-
-        /* --- TÍTULOS E TEXTOS --- */
-        h1, h2, h3 {
-            color: #2C2420 !important; /* Títulos em Marrom Escuro */
-            font-family: 'Montserrat', sans-serif;
+            background-color: #5C4B3C !important;
+            border-color: #5C4B3C !important;
         }
         
-        /* Ajuste de metricas (Financeiro) */
-        [data-testid="stMetricValue"] {
-            color: #C5A065 !important; /* Números em Dourado */
+        /* Botão Secundário (Voltar) */
+        button[kind="secondary"] {
+            border-color: #3E3228 !important;
+            color: #3E3228 !important;
+        }
+
+        /* --- TEXTOS E TÍTULOS --- */
+        h1, h2, h3 {
+            color: #3E3228 !important;
+        }
+        
+        /* Containers e Caixas */
+        [data-testid="stExpander"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E0E0E0 !important;
+            border-radius: 10px !important;
         }
     </style>
     """, unsafe_allow_html=True)
+
+# --- CABEÇALHO COM LOGO (Fundo Escuro para Destaque) ---
+def mostrar_cabecalho():
+    # Cria um container visual no topo com a cor da marca
+    # Isso garante que a logo (se tiver letras brancas/douradas) apareça bem
+    col_logo1, col_logo2, col_logo3 = st.columns([1, 1, 1])
+    with col_logo2:
+        try:
+            # Centraliza a imagem. Use_column_width ajusta ao tamanho da coluna central
+            st.image("LOGO lUNA ALENCAR.png", use_container_width=True) 
+        except:
+            st.warning("⚠️ Logo não encontrada. Faça upload de 'LOGO lUNA ALENCAR.png'")
+    
+    st.markdown("---") # Linha divisória elegante
 
 # --- FUNÇÕES ÚTEIS ---
 def formatar_data(data_iso):
@@ -148,29 +157,16 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, f"SALDO DO DIA: R$ {total_ent - total_sai:.2f}", ln=True)
     return pdf.output(dest='S').encode('latin-1')
 
-# --- EXIBIÇÃO DA LOGO ---
-def mostrar_logo_sidebar():
-    try:
-        # Tenta carregar a imagem. Se der erro (arquivo nao existe), ignora para nao quebrar o app
-        st.sidebar.image("LOGO lUNA ALENCAR.png", use_container_width=True)
-        st.sidebar.markdown("---")
-    except:
-        st.sidebar.warning("Logo não encontrada (Upload necessário)")
-
 # --- TELAS DO SISTEMA ---
 
 def tela_menu_principal():
-    aplicar_estilo_premium()
-    mostrar_logo_sidebar()
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     
-    st.sidebar.write(f"Olá, **{st.session_state['usuario']['nome']}**")
-    
-    # Título elegante
-    st.markdown("<h1 style='text-align: center; color: #2C2420;'>PAINEL DE CONTROLE</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #666;'>Selecione uma opção abaixo</p>", unsafe_allow_html=True)
-    st.write("") 
+    st.markdown(f"<h3 style='text-align: center;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h3>", unsafe_allow_html=True)
     st.write("") 
     
+    # GRID CENTRALIZADO (Botões Grandes)
     c1, c2 = st.columns(2)
     
     with c1:
@@ -184,27 +180,30 @@ def tela_menu_principal():
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥 USUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            st.write("") # Espaçador
+            pass # Espaço vazio intencional para manter o grid bonito
         
-        if st.button("🔒 SENHA"): st.session_state['page'] = 'senha'
+        if st.button("🔒 MINHA SENHA"): st.session_state['page'] = 'senha'
 
-    st.divider()
+    st.write("")
+    st.write("")
     
-    # Centralizar botão de sair
-    col_sair1, col_sair2, col_sair3 = st.columns([1,1,1])
-    with col_sair2:
+    # Botão Sair centralizado e discreto mas visível
+    col_s1, col_s2, col_s3 = st.columns([1,1,1])
+    with col_s2:
         if st.button("Sair do Sistema", type="primary", use_container_width=True): 
             st.session_state.clear()
             st.rerun()
 
 def tela_voltar():
-    mostrar_logo_sidebar()
-    if st.sidebar.button("⬅️ VOLTAR AO MENU"):
+    if st.button("⬅️ VOLTAR AO MENU PRINCIPAL", use_container_width=True):
         st.session_state['page'] = 'menu'
         st.rerun()
 
 def tela_cadastro():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
+    
     st.title("➕ Novo Cadastro")
     
     with st.container(border=True):
@@ -249,7 +248,7 @@ def tela_cadastro():
                 check_social = st.checkbox("Já compareceu na Avaliação?")
 
             st.write("")
-            if st.form_submit_button("💾 Salvar Cadastro Completo", type="primary"):
+            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary", use_container_width=True):
                 if not nome:
                     st.error("Nome é obrigatório.")
                 else:
@@ -292,10 +291,13 @@ def tela_cadastro():
                         st.error(f"Erro ao salvar: {e}")
 
 def tela_busca_edicao():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
+    
     st.title("🔍 Buscar e Editar")
     
-    termo = st.text_input("Pesquisar Cliente (Nome ou CPF)", placeholder="Digite para buscar...")
+    termo = st.text_input("Pesquisar Cliente (Nome ou CPF)", placeholder="Digite aqui...")
     
     if termo:
         res = supabase.table('clientes').select("*").ilike('nome', f"%{termo}%").order('nome').execute()
@@ -331,7 +333,7 @@ def tela_busca_edicao():
                     n_email = c1.text_input("Email", value=cli['email'])
                     n_senha = c2.text_input("Senha INSS", value=cli['senha_meu_inss'])
                     
-                    if st.form_submit_button("Atualizar Dados"):
+                    if st.form_submit_button("Atualizar Dados", type="primary"):
                         supabase.table('clientes').update({
                             "nome": n_nome, "cpf": n_cpf, "email": n_email, "senha_meu_inss": n_senha
                         }).eq('id', cli['id']).execute()
@@ -378,6 +380,8 @@ def tela_busca_edicao():
                             st.rerun()
 
 def tela_agenda():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
     st.title("📅 Agenda")
     
@@ -405,6 +409,8 @@ def tela_agenda():
         st.info("Nada agendado para este período.")
 
 def tela_financeiro():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
     st.title("💰 Financeiro")
     
@@ -552,6 +558,8 @@ def tela_financeiro():
                 st.warning("Este cliente não tem processos cadastrados.")
 
 def tela_usuarios():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
     st.title("👥 Gestão de Usuários")
     
@@ -576,6 +584,8 @@ def tela_usuarios():
                 st.error("Erro. Talvez o login já exista.")
 
 def tela_senha():
+    aplicar_estilo_visual()
+    mostrar_cabecalho()
     tela_voltar()
     st.title("🔒 Alterar Senha")
     
@@ -591,7 +601,7 @@ def tela_senha():
 def main():
     if 'usuario' not in st.session_state:
         # TELA DE LOGIN ESTILIZADA
-        aplicar_estilo_premium()
+        aplicar_estilo_visual()
         
         # Centralizar Login verticalmente e horizontalmente
         st.write("")
