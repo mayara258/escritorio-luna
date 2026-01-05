@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS DARK PREMIUM (Fundo Escuro e Dourado) ---
+# --- ESTILO CSS DE LUXO (Cor da Logo + Botões Quadrados) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -27,92 +27,94 @@ def aplicar_estilo_visual():
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* --- FUNDO GERAL (Dark Coffee) --- */
+        /* --- FUNDO EXATO DA LOGO --- */
         .stApp {
-            background-color: #1E1B18; /* Café bem escuro */
-            background-image: linear-gradient(180deg, #1E1B18 0%, #292421 100%);
-            color: #E0E0E0; /* Texto claro */
+            background-color: #2E2522; /* Marrom Café Original da Logo */
+            color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU (Quadrados e Grandes) --- */
+        /* --- BOTÕES DO MENU (QUADRADOS E CENTRAIS) --- */
+        /* Aumentei a altura para 200px e a fonte para 22px */
         div[data-testid="column"] .stButton button {
-            height: 180px !important;   /* Bem alto para ficar quadrado */
+            height: 200px !important;
             width: 100% !important;
-            background-color: #2B2522 !important; /* Fundo do cartão */
-            color: #C5A065 !important;  /* Texto Dourado */
+            background-color: transparent !important; /* Fundo transparente para leveza */
+            color: #C5A065 !important;  /* Dourado Nobre */
             font-size: 22px !important;
             font-weight: 600 !important;
             border: 2px solid #C5A065 !important; /* Borda Dourada */
-            border-radius: 4px !important; /* Cantos levemente arredondados (visual mais quadrado) */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
-            transition: all 0.3s ease !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+            transition: all 0.4s ease !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px !important; /* Espaço entre linhas */
+        }
+        
+        /* Efeito ao passar o mouse */
+        div[data-testid="column"] .stButton button:hover {
+            background-color: #C5A065 !important; /* Preenche de Dourado */
+            color: #2E2522 !important; /* Texto vira Marrom */
+            transform: scale(1.05) !important; /* Cresce um pouco */
+            box-shadow: 0 10px 25px rgba(197, 160, 101, 0.4) !important;
+            border-color: #C5A065 !important;
+        }
+
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar) --- */
+        button[kind="primary"] {
+            background-color: #C5A065 !important;
+            border-color: #C5A065 !important;
+            color: #2E2522 !important;
+            font-weight: bold !important;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
-        div[data-testid="column"] .stButton button:hover {
-            background-color: #C5A065 !important; /* Preenchimento Dourado */
-            color: #1E1B18 !important; /* Texto Escuro para contraste */
-            transform: translateY(-5px) !important;
-            box-shadow: 0 10px 20px rgba(197, 160, 101, 0.2) !important;
-            border-color: #C5A065 !important;
-        }
-
-        /* --- BOTÕES DE AÇÃO (Entrar, Sair, Salvar) --- */
-        button[kind="primary"] {
-            background-color: #C5A065 !important; /* Dourado */
-            border-color: #C5A065 !important;
-            color: #1E1B18 !important; /* Texto Escuro */
-            font-weight: bold !important;
-            border-radius: 4px !important;
-        }
         button[kind="primary"]:hover {
-            background-color: #E6CFA0 !important; /* Dourado mais claro */
-            border-color: #E6CFA0 !important;
-        }
-        
-        button[kind="secondary"] {
-            background-color: transparent !important;
-            border-color: #C5A065 !important;
-            color: #C5A065 !important;
+            background-color: #D4AF37 !important;
+            box-shadow: 0 4px 12px rgba(197, 160, 101, 0.3) !important;
         }
 
-        /* --- INPUTS E CAIXAS DE TEXTO (Adaptação para Fundo Escuro) --- */
+        /* --- CAMPOS DE TEXTO (Adaptação Dark) --- */
+        /* Deixa os inputs com fundo escuro para não ofuscar */
         .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
-            background-color: #2B2522 !important;
+            background-color: #3A302C !important; /* Um tom mais claro que o fundo */
             color: #FFFFFF !important;
-            border: 1px solid #555 !important;
+            border: 1px solid #5C4B3C !important;
+            border-radius: 6px !important;
+        }
+        /* Foco no campo */
+        .stTextInput input:focus {
+            border-color: #C5A065 !important;
+        }
+
+        /* --- TÍTULOS --- */
+        h1, h2, h3 {
+            color: #C5A065 !important; /* Dourado */
+            font-weight: 300 !important; /* Fonte mais fina e elegante */
         }
         
-        /* --- TÍTULOS E TEXTOS --- */
-        h1, h2, h3, h4, h5 {
-            color: #C5A065 !important; /* Títulos Dourados */
-        }
-        p, label, .stMarkdown {
-            color: #E0E0E0 !important;
-        }
-        
-        /* --- CONTAINERS E EXPANDERS --- */
+        /* --- CAIXAS DE EXPANSÃO (Cards dos clientes) --- */
         [data-testid="stExpander"] {
-            background-color: #2B2522 !important;
-            border: 1px solid #444 !important;
-            border-radius: 8px !important;
+            background-color: #3A302C !important;
+            border: 1px solid #5C4B3C !important;
+            color: white !important;
         }
-        [data-testid="stMetricValue"] {
-            color: #C5A065 !important;
+        [data-testid="stExpander"] p {
+            color: #E0E0E0 !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
-# --- CABEÇALHO COM LOGO ---
+# --- CABEÇALHO ---
 def mostrar_cabecalho():
-    col_logo1, col_logo2, col_logo3 = st.columns([1, 1, 1])
-    with col_logo2:
+    # Centralização da Logo
+    c1, c2, c3 = st.columns([1, 1, 1])
+    with c2:
         try:
-            st.image("LOGO lUNA ALENCAR.png", use_container_width=True) 
+            st.image("LOGO lUNA ALENCAR.png", use_container_width=True)
         except:
-            st.warning("⚠️ Logo não encontrada.")
-    st.write("") # Espaço
+            st.warning("Logo não encontrada.")
+    st.write("")
 
 # --- FUNÇÕES ÚTEIS ---
 def formatar_data(data_iso):
@@ -131,7 +133,6 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
-    # Cabeçalho Tabela
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
@@ -176,39 +177,45 @@ def tela_menu_principal():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     
-    st.markdown(f"<h3 style='text-align: center; color: #E0E0E0;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='text-align: center; color: #C5A065; font-weight: lighter;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h4>", unsafe_allow_html=True)
     st.write("") 
     st.write("") 
     
-    # GRID CENTRALIZADO (Botões Grandes e Quadrados)
-    c1, c2 = st.columns(2)
+    # --- LAYOUT ESTRATÉGICO PARA BOTÕES QUADRADOS ---
+    # Usamos colunas vazias nas pontas ([1, 2, 2, 1]) para "espremer" o conteúdo no meio.
+    # Assim os botões ficam mais altos que largos (ou quadrados).
+    col_vazia_esq, col_btn1, col_btn2, col_vazia_dir = st.columns([1, 2, 2, 1])
     
-    with c1:
-        if st.button("📅 AGENDAMENTOS"): st.session_state['page'] = 'agenda'
-        if st.button("🔍 BUSCAR / EDITAR"): st.session_state['page'] = 'busca'
-        if st.button("💰 FINANCEIRO"): st.session_state['page'] = 'financeiro'
+    with col_btn1:
+        if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
+        if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
+        if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
     
-    with c2:
-        if st.button("➕ NOVO CADASTRO"): st.session_state['page'] = 'cadastro'
+    with col_btn2:
+        if st.button("➕\n\nNOVO CADASTRO"): st.session_state['page'] = 'cadastro'
         
+        # Botão condicional de Admin
         if st.session_state['usuario'].get('perfil') == 'admin':
-            if st.button("👥 USUÁRIOS"): st.session_state['page'] = 'usuarios'
+            if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            pass 
-        
-        if st.button("🔒 MINHA SENHA"): st.session_state['page'] = 'senha'
+            st.write("") # Mantém o alinhamento
+            st.write("")
+            
+        if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
 
     st.write("")
     st.write("")
     
-    col_s1, col_s2, col_s3 = st.columns([1,1,1])
-    with col_s2:
-        if st.button("Sair do Sistema", type="primary", use_container_width=True): 
+    # Botão Sair Centralizado
+    c1, c2, c3 = st.columns([1,1,1])
+    with c2:
+        if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
             st.session_state.clear()
             st.rerun()
 
 def tela_voltar():
-    if st.button("⬅️ VOLTAR AO MENU PRINCIPAL"):
+    # Botão de voltar discreto no topo
+    if st.button("⬅️ MENU INICIAL", type="secondary"):
         st.session_state['page'] = 'menu'
         st.rerun()
 
@@ -217,98 +224,97 @@ def tela_cadastro():
     mostrar_cabecalho()
     tela_voltar()
     
-    st.title("➕ Novo Cadastro")
+    st.markdown("<h2 style='text-align: center;'>Novo Cadastro</h2>", unsafe_allow_html=True)
     
-    with st.container(border=True):
-        with st.form("form_completo"):
-            st.markdown("#### 1. Dados do Cliente")
-            c1, c2 = st.columns(2)
-            nome = c1.text_input("Nome Completo")
-            cpf = c2.text_input("CPF")
-            data_nasc = c1.date_input("Data Nascimento", value=None, format="DD/MM/YYYY")
-            email = c2.text_input("Email")
-            senha_inss = c1.text_input("Senha Meu INSS")
-            colaborador = c2.text_input("Colaborador (Indicação)")
+    with st.form("form_completo"):
+        st.markdown("### 1. Dados do Cliente")
+        c1, c2 = st.columns(2)
+        nome = c1.text_input("Nome Completo")
+        cpf = c2.text_input("CPF")
+        data_nasc = c1.date_input("Data Nascimento", value=None, format="DD/MM/YYYY")
+        email = c2.text_input("Email")
+        senha_inss = c1.text_input("Senha Meu INSS")
+        colaborador = c2.text_input("Colaborador (Indicação)")
+        
+        st.divider()
+        st.markdown("### 2. Dados do Processo")
+        c3, c4, c5 = st.columns(3)
+        servico = c3.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria", "Salário Maternidade", "Pensão", "Outro"])
+        num_req = c4.text_input("Nº Requerimento (NB)")
+        esfera = c5.selectbox("Esfera", ["Administrativo", "Judicial"])
+        
+        situacao = st.selectbox("Situação Atual", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
+        
+        st.divider()
+        st.markdown("### 3. Agendamentos Iniciais")
+        
+        col_p, col_s = st.columns(2)
+        
+        with col_p:
+            st.info("🩺 **Perícia / Audiência**")
+            tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
+            local_pericia = st.text_input("Local da Perícia", value="Agência INSS")
+            data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
+            hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
+            check_pericia = st.checkbox("Já compareceu nesta Perícia?")
             
-            st.divider()
-            st.markdown("#### 2. Dados do Processo")
-            c3, c4, c5 = st.columns(3)
-            servico = c3.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria", "Salário Maternidade", "Pensão", "Outro"])
-            num_req = c4.text_input("Nº Requerimento (NB)")
-            esfera = c5.selectbox("Esfera", ["Administrativo", "Judicial"])
-            
-            situacao = st.selectbox("Situação Atual", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
-            
-            st.divider()
-            st.markdown("#### 3. Agendamentos Iniciais (Opcional)")
-            
-            col_p, col_s = st.columns(2)
-            
-            with col_p:
-                st.info("🩺 **Perícia / Audiência**")
-                tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
-                local_pericia = st.text_input("Local da Perícia", value="Agência INSS")
-                data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
-                hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
-                check_pericia = st.checkbox("Já compareceu nesta Perícia?")
-                
-            with col_s:
-                st.info("📋 **Avaliação Social**")
-                tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
-                local_social = st.text_input("Local da Avaliação", value="Agência INSS")
-                data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
-                hora_social = st.time_input("Hora Avaliação", value=time(8,0))
-                check_social = st.checkbox("Já compareceu na Avaliação?")
+        with col_s:
+            st.info("📋 **Avaliação Social**")
+            tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
+            local_social = st.text_input("Local da Avaliação", value="Agência INSS")
+            data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
+            hora_social = st.time_input("Hora Avaliação", value=time(8,0))
+            check_social = st.checkbox("Já compareceu na Avaliação?")
 
-            st.write("")
-            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary", use_container_width=True):
-                if not nome:
-                    st.error("Nome é obrigatório.")
-                else:
-                    try:
-                        d_nasc = str(data_nasc) if data_nasc else None
-                        res_cli = supabase.table('clientes').insert({
-                            "nome": nome, "cpf": cpf, "email": email, 
-                            "senha_meu_inss": senha_inss, "colaborador": colaborador,
-                            "data_nascimento": d_nasc
+        st.write("")
+        if st.form_submit_button("💾 SALVAR CADASTRO", type="primary", use_container_width=True):
+            if not nome:
+                st.error("Nome é obrigatório.")
+            else:
+                try:
+                    d_nasc = str(data_nasc) if data_nasc else None
+                    res_cli = supabase.table('clientes').insert({
+                        "nome": nome, "cpf": cpf, "email": email, 
+                        "senha_meu_inss": senha_inss, "colaborador": colaborador,
+                        "data_nascimento": d_nasc
+                    }).execute()
+                    cli_id = res_cli.data[0]['id']
+                    
+                    res_proc = supabase.table('processos').insert({
+                        "cliente_id": cli_id, "tipo_beneficio": servico,
+                        "numero_requerimento": num_req, "status_processo": situacao,
+                        "esfera": esfera
+                    }).execute()
+                    proc_id = res_proc.data[0]['id']
+
+                    if data_pericia:
+                        dt_full = datetime.combine(data_pericia, hora_pericia).isoformat()
+                        status_p = "Compareceu" if check_pericia else "Pendente"
+                        supabase.table('agendamentos').insert({
+                            "processo_id": proc_id, "tipo_evento": tipo_pericia,
+                            "data_hora": dt_full, "local_cidade": local_pericia,
+                            "status_comparecimento": status_p
                         }).execute()
-                        cli_id = res_cli.data[0]['id']
                         
-                        res_proc = supabase.table('processos').insert({
-                            "cliente_id": cli_id, "tipo_beneficio": servico,
-                            "numero_requerimento": num_req, "status_processo": situacao,
-                            "esfera": esfera
+                    if data_social:
+                        dt_full_s = datetime.combine(data_social, hora_social).isoformat()
+                        status_s = "Compareceu" if check_social else "Pendente"
+                        supabase.table('agendamentos').insert({
+                            "processo_id": proc_id, "tipo_evento": tipo_social,
+                            "data_hora": dt_full_s, "local_cidade": local_social,
+                            "status_comparecimento": status_s
                         }).execute()
-                        proc_id = res_proc.data[0]['id']
 
-                        if data_pericia:
-                            dt_full = datetime.combine(data_pericia, hora_pericia).isoformat()
-                            status_p = "Compareceu" if check_pericia else "Pendente"
-                            supabase.table('agendamentos').insert({
-                                "processo_id": proc_id, "tipo_evento": tipo_pericia,
-                                "data_hora": dt_full, "local_cidade": local_pericia,
-                                "status_comparecimento": status_p
-                            }).execute()
-                            
-                        if data_social:
-                            dt_full_s = datetime.combine(data_social, hora_social).isoformat()
-                            status_s = "Compareceu" if check_social else "Pendente"
-                            supabase.table('agendamentos').insert({
-                                "processo_id": proc_id, "tipo_evento": tipo_social,
-                                "data_hora": dt_full_s, "local_cidade": local_social,
-                                "status_comparecimento": status_s
-                            }).execute()
-
-                        st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
-                    except Exception as e:
-                        st.error(f"Erro ao salvar: {e}")
+                    st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
+                except Exception as e:
+                    st.error(f"Erro ao salvar: {e}")
 
 def tela_busca_edicao():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     tela_voltar()
     
-    st.title("🔍 Buscar e Editar")
+    st.markdown("<h2 style='text-align: center;'>Buscar e Editar</h2>", unsafe_allow_html=True)
     
     termo = st.text_input("Pesquisar Cliente (Nome ou CPF)", placeholder="Digite aqui...")
     
@@ -318,9 +324,8 @@ def tela_busca_edicao():
         for cli in res.data:
             status_geral = cli.get('status_geral', 'Ativo')
             cor_status = "red" if status_geral == 'Arquivado' else "green"
-            colab_txt = f" | Indicado por: {cli['colaborador']}" if cli.get('colaborador') else ""
             
-            with st.expander(f":{cor_status}[{status_geral}] - 👤 {cli['nome']} {colab_txt}"):
+            with st.expander(f":{cor_status}[{status_geral}] - 👤 {cli['nome']}"):
                 
                 if status_geral == 'Ativo':
                     c_arq1, c_arq2 = st.columns([3, 1])
@@ -345,7 +350,7 @@ def tela_busca_edicao():
                     n_email = c1.text_input("Email", value=cli['email'])
                     n_senha = c2.text_input("Senha INSS", value=cli['senha_meu_inss'])
                     
-                    if st.form_submit_button("Atualizar Dados", type="primary"):
+                    if st.form_submit_button("ATUALIZAR DADOS", type="primary"):
                         supabase.table('clientes').update({
                             "nome": n_nome, "cpf": n_cpf, "email": n_email, "senha_meu_inss": n_senha
                         }).eq('id', cli['id']).execute()
@@ -395,12 +400,11 @@ def tela_agenda():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     tela_voltar()
-    st.title("📅 Agenda")
+    st.markdown("<h2 style='text-align: center;'>Agenda</h2>", unsafe_allow_html=True)
     
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        mes = c1.selectbox("Mês", range(1,13), index=datetime.now().month-1)
-        ano = c2.number_input("Ano", value=datetime.now().year)
+    c1, c2 = st.columns(2)
+    mes = c1.selectbox("Mês", range(1,13), index=datetime.now().month-1)
+    ano = c2.number_input("Ano", value=datetime.now().year)
     
     res = supabase.table('agendamentos').select("*, processos(id, clientes(nome))").order('data_hora').execute()
     
@@ -424,7 +428,7 @@ def tela_financeiro():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     tela_voltar()
-    st.title("💰 Financeiro")
+    st.markdown("<h2 style='text-align: center;'>Financeiro</h2>", unsafe_allow_html=True)
     
     abas = st.tabs(["Fluxo de Caixa", "Contratos", "Novo Contrato"])
     
@@ -452,7 +456,6 @@ def tela_financeiro():
             df = pd.DataFrame(filtrados)
             df['Data'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%d/%m/%Y')
             
-            # Totais
             tot_ent = sum(x['valor'] for x in filtrados if x['tipo']=='Entrada')
             tot_sai = sum(x['valor'] for x in filtrados if x['tipo']=='Saída')
             
