@@ -326,4 +326,133 @@ def tela_financeiro():
                             "data_movimentacao": datetime.now().isoformat()
                         }).execute()
                         
-                        st.success(f"Baixado por
+                        st.success(f"Baixado por {user_atual}!")
+                        st.rerun()
+
+    with abas[2]:
+        st.subheader("Novo Contrato")
+        
+        cli_res = supabase.table('clientes').select("id, nome").order('nome').execute()
+        clientes_dict = {c['id']: c['nome'] for c in cli_res.data}
+        cli_selecionado = st.selectbox("Selecione o Cliente", options=list(clientes_dict.keys()), format_func=lambda x: clientes_dict[x])
+        
+        if cli_selecionado:
+            proc_res = supabase.table('processos').select("id, tipo_beneficio, numero_requerimento").eq('cliente_id', cli_selecionado).execute()
+            if proc_res.data:
+                proc_dict = {p['id']: f"{p['tipo_beneficio']} (NB: {p.get('numero_requerimento', '-')})" for p in proc_res.data}
+                proc_id = st.selectbox("Vincular ao Processo:", options=list(proc_dict.keys()), format_func=lambda x: proc_dict[x])
+                
+                st.divider()
+                c_val1, c_val2 = st.columns(2)
+                valor_total = c_val1.number_input("Valor Total (R$)", min_value=0.0, step=100.0)
+                valor_entrada = c_val2.number_input("Entrada (R$)", min_value=0.0, step=50.0)
+                
+                c_parc1, c_parc2 = st.columns(2)
+                qtd_parcelas = c_parc1.number_input("Qtd Parcelas", min_value=1, value=1)
+                vencimento_inicial = c_parc2.date_input("Vencimento 1ª Parcela", format="DD/MM/YYYY")
+                
+                saldo = valor_total - valor_entrada
+                if saldo > 0:
+                    st.info(f"Serão geradas {qtd_parcelas} parcelas de R$ {saldo/qtd_parcelas:.2f}")
+                
+                if st.button("Gerar Contrato"):
+                    if valor_total <= 0:
+                        st.error("Valor inválido.")
+                    else:
+                        res_cont = supabase.table('contratos').insert({
+                            "processo_id": proc_id, "valor_total": valor_total,
+                            "valor_entrada": valor_entrada, "qtd_parcelas": qtd_parcelas
+                        }).execute()
+                        contrato_id = res_cont.data[0]['id']
+                        
+                        if valor_entrada > 0:
+                             supabase.table('caixa').insert({
+                                "tipo": "Entrada", "descricao": f"Entrada Honorários - {clientes_dict[cli_selecionado]}",
+                                "valor": valor_entrada, "forma_pagamento": "Dinheiro",
+                                "usuario_responsavel": st.session_state['usuario']['usuario']
+                            }).execute()
+
+                        if saldo > 0:
+                            val_p = round(saldo / qtd_parcelas, 2)
+                            diff = round(saldo - (val_p * qtd_parcelas), 2)
+                            for i in range(qtd_parcelas):
+                                valor_desta = val_p + diff if i == qtd_parcelas - 1 else val_p
+                                data_venc = vencimento_inicial + relativedelta(months=i)
+                                supabase.table('parcelas').insert({
+                                    "contrato_id": contrato_id, "numero_parcela": i+1,
+                                    "valor_parcela": valor_desta, "data_vencimento": str(data_venc),
+                                    "forma_pagamento": "Pendente"
+                                }).execute()
+                        
+                        st.success("Contrato Gerado!")
+                        st.rerun()
+            else:
+                st.warning("Este cliente não tem processos cadastrados.")
+
+def tela_usuarios():
+    tela_voltar()
+    st.title("👥 Gestão de Usuários (Admin)")
+    
+    if st.session_state['usuario'].get('perfil') != 'admin':
+        st.error("Acesso negado.")
+        return
+
+    st.subheader("Cadastrar Novo Funcionário")
+    with st.form("new_user"):
+        u_nome = st.text_input("Nome")
+        u_login = st.text_input("Login/Usuário")
+        u_senha = st.text_input("Senha Inicial")
+        u_perfil = st.selectbox("Perfil", ["comum", "admin"])
+        
+        if st.form_submit_button("Criar Usuário"):
+            try:
+                supabase.table('usuarios').insert({
+                    "nome": u_nome, "usuario": u_login, "senha": u_senha, "perfil": u_perfil
+                }).execute()
+                st.success(f"Usuário {u_login} criado!")
+            except:
+                st.error("Erro. Talvez o login já exista.")
+
+def tela_senha():
+    tela_voltar()
+    st.title("🔒 Alterar Senha")
+    
+    senha_nova = st.text_input("Nova Senha", type="password")
+    if st.button("Confirmar Alteração"):
+        meu_id = st.session_state['usuario']['id']
+        supabase.table('usuarios').update({"senha": senha_nova}).eq('id', meu_id).execute()
+        st.success("Senha alterada! Faça login novamente.")
+        st.session_state.clear()
+        st.rerun()
+
+# --- CONTROLE DE NAVEGAÇÃO ---
+def main():
+    if 'usuario' not in st.session_state:
+        # TELA DE LOGIN
+        c1, c2, c3 = st.columns([1,1,1])
+        with c2:
+            st.title("⚖️ Login")
+            u = st.text_input("Usuário")
+            s = st.text_input("Senha", type="password")
+            if st.button("Entrar", use_container_width=True):
+                res = supabase.table('usuarios').select("*").eq('usuario', u).eq('senha', s).execute()
+                if res.data:
+                    st.session_state['usuario'] = res.data[0]
+                    st.session_state['page'] = 'menu'
+                    st.rerun()
+                else:
+                    st.error("Login inválido")
+    else:
+        # ROTEADOR DE PÁGINAS
+        pg = st.session_state.get('page', 'menu')
+        
+        if pg == 'menu': tela_menu_principal()
+        elif pg == 'cadastro': tela_cadastro()
+        elif pg == 'busca': tela_busca_edicao()
+        elif pg == 'agenda': tela_agenda()
+        elif pg == 'financeiro': tela_financeiro()
+        elif pg == 'usuarios': tela_usuarios()
+        elif pg == 'senha': tela_senha()
+
+if __name__ == "__main__":
+    main()
