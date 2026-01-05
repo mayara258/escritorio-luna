@@ -17,22 +17,29 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- FUNÇÕES DE ESTILO (CSS) ---
+# --- FUNÇÕES DE ESTILO (CSS TURBO) ---
 def aplicar_estilo_menu():
+    # Este CSS afeta APENAS botões que estão dentro de colunas (o menu central)
+    # O botão 'Sair', que fica fora das colunas, não será afetado.
     st.markdown("""
     <style>
         div[data-testid="column"] .stButton button {
-            height: 130px;
-            width: 100%;
-            font-size: 22px;
-            font-weight: 600;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            transition: all 0.3s;
+            height: 150px !important;    /* Altura forçada */
+            width: 100% !important;      /* Largura total */
+            font-size: 24px !important;  /* Letra grande */
+            font-weight: 700 !important; /* Negrito */
+            border-radius: 15px !important;
+            border: 1px solid #ccc !important;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1) !important;
+            transition: all 0.3s ease !important;
+            white-space: normal !important; /* Permite quebrar linha se o texto for longo */
         }
+        
         div[data-testid="column"] .stButton button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: scale(1.03) !important;
+            border-color: #ff4b4b !important; /* Cor de destaque ao passar o mouse */
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15) !important;
+            z-index: 999 !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -95,12 +102,13 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
 # --- TELAS DO SISTEMA ---
 
 def tela_menu_principal():
-    aplicar_estilo_menu()
+    aplicar_estilo_menu() # INJETA O VISUAL DOS BOTÕES GRANDES
     
     st.title("⚖️ Painel Principal")
     st.write(f"Bem-vindo(a), **{st.session_state['usuario']['nome']}**")
     st.write("") 
     
+    # GRID DO MENU (Botões ficarão GIGANTES aqui por causa do CSS acima)
     c1, c2 = st.columns(2)
     
     with c1:
@@ -111,15 +119,18 @@ def tela_menu_principal():
     with c2:
         if st.button("➕ Novo Cadastro"): st.session_state['page'] = 'cadastro'
         
+        # Botão Admin
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥 Gestão de Usuários"): st.session_state['page'] = 'usuarios'
         else:
+            # Se não for admin, deixamos vazio para o layout não quebrar
             pass
         
         if st.button("🔒 Alterar Minha Senha"): st.session_state['page'] = 'senha'
 
     st.divider()
     
+    # Botão SAIR (Fora das colunas, então fica no tamanho PADRÃO/PEQUENO)
     if st.button("Sair do Sistema", type="primary"): 
         st.session_state.clear()
         st.rerun()
@@ -328,6 +339,8 @@ def tela_financeiro():
                         
                         st.success(f"Baixado por {user_atual}!")
                         st.rerun()
+        else:
+            st.info("Nenhuma parcela pendente.")
 
     with abas[2]:
         st.subheader("Novo Contrato")
