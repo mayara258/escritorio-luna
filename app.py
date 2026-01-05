@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS LUXO (GOLD & DARK) ---
+# --- ESTILO CSS (LUXO: DOURADO, PRETO E CAFÉ) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -27,38 +27,42 @@ def aplicar_estilo_visual():
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* --- FUNDO GERAL (Café Escuro) --- */
+        /* --- FUNDO GERAL (Café Escuro da Logo) --- */
         .stApp {
-            background-color: #1E1B18; 
+            background-color: #2E2522; 
             color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (Cartões Dourados Sólidos) --- */
+        /* --- BOTÕES DO MENU PRINCIPAL (Tamanho Igual e Dourados) --- */
         div[data-testid="column"] .stButton button {
-            height: 160px !important;    /* Altura fixa para ficar quadrado */
-            width: 100% !important;      /* Largura total da coluna */
+            height: 180px !important;     /* Altura Fixa para todos */
+            min-height: 180px !important; /* Garante que não diminua */
+            width: 100% !important;       /* Ocupa toda a largura da coluna */
+            
             background-color: #C5A065 !important; /* FUNDO DOURADO */
-            color: #1E1B18 !important;   /* LETRA ESCURA (Contraste alto) */
+            color: #1E1B18 !important;            /* LETRA PRETA/ESCURA */
+            
             font-size: 20px !important;
-            font-weight: 800 !important; /* Negrito extra */
+            font-weight: 800 !important;
             border: none !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.4) !important;
+            border-radius: 6px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
             transition: all 0.3s ease !important;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 15px !important;
+            white-space: normal !important; /* Permite quebrar linha sem deformar */
+            margin-bottom: 20px !important;
         }
         
-        /* Efeito ao passar o mouse (Fica mais claro) */
+        /* Efeito ao passar o mouse */
         div[data-testid="column"] .stButton button:hover {
-            background-color: #D4AF37 !important; /* Dourado mais brilhante */
-            color: #000000 !important; /* Preto absoluto */
-            transform: scale(1.03) !important;
-            box-shadow: 0 8px 15px rgba(197, 160, 101, 0.4) !important;
+            background-color: #D4AF37 !important; /* Dourado mais claro */
+            transform: scale(1.02) !important;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3) !important;
+            color: #000000 !important;
         }
 
-        /* --- BOTÕES DE AÇÃO SECUNDÁRIOS (Sair, Salvar) --- */
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar) --- */
         button[kind="primary"] {
             background-color: #C5A065 !important;
             color: #1E1B18 !important;
@@ -71,42 +75,44 @@ def aplicar_estilo_visual():
             border-color: #E6CFA0 !important;
         }
         
-        /* Botão de Voltar */
+        /* Botão Secundário (Voltar) */
         button[kind="secondary"] {
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
         }
 
-        /* --- CAMPOS DE TEXTO (Legibilidade no Fundo Escuro) --- */
+        /* --- CAMPOS DE TEXTO E INPUTS --- */
         .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
-            background-color: #2B2522 !important; 
+            background-color: #3A302C !important; 
             color: #FFFFFF !important;
-            border: 1px solid #555 !important;
-            border-radius: 5px !important;
+            border: 1px solid #5C4B3C !important;
+            border-radius: 4px !important;
         }
-        /* Cor do label (títulos dos campos) */
-        .stMarkdown label, .stMarkdown p {
-            color: #E0E0E0 !important;
+        
+        /* --- COR DOS LABELS (USUÁRIO/SENHA) --- */
+        /* Isso garante que 'Usuário' e 'Senha' fiquem Brancos */
+        .stTextInput label, .stSelectbox label, .stDateInput label {
+            color: #FFFFFF !important;
+            font-weight: 500 !important;
+            font-size: 16px !important;
         }
-
+        
         /* --- TÍTULOS --- */
         h1, h2, h3 {
             color: #C5A065 !important; /* Dourado */
-            font-weight: 600 !important;
         }
         
         /* --- CARDS/EXPANDERS --- */
         [data-testid="stExpander"] {
-            background-color: #2B2522 !important;
-            border: 1px solid #444 !important;
+            background-color: #3A302C !important;
+            border: 1px solid #5C4B3C !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
 # --- CABEÇALHO ---
 def mostrar_cabecalho():
-    # Centralização da Logo
     c1, c2, c3 = st.columns([1, 1, 1])
     with c2:
         try:
@@ -132,7 +138,6 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
-    # Cabeçalho Tabela
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
@@ -182,7 +187,6 @@ def tela_menu_principal():
     st.write("") 
     
     # --- LAYOUT DE BOTÕES (CENTRALIZADO) ---
-    # Usamos colunas vazias nas pontas para centralizar e padronizar o tamanho
     col_esq, col_btn1, col_btn2, col_dir = st.columns([1, 2, 2, 1])
     
     with col_btn1:
@@ -196,15 +200,14 @@ def tela_menu_principal():
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            # Botão vazio apenas visual para manter alinhamento se não for admin
-            st.markdown("<div style='height: 160px; margin-bottom: 15px;'></div>", unsafe_allow_html=True)
+            # Botão invisível para manter grid perfeito
+            st.markdown("<div style='height: 180px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
             
         if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
 
     st.write("")
     st.write("")
     
-    # Botão Sair
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
         if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
@@ -303,7 +306,7 @@ def tela_cadastro():
                                 "status_comparecimento": status_s
                             }).execute()
 
-                        st.success(f"Cadastro realizado! Cliente: {nome}")
+                        st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
                     except Exception as e:
                         st.error(f"Erro ao salvar: {e}")
 
@@ -623,7 +626,7 @@ def main():
         c1, c2, c3 = st.columns([1,2,1])
         with c2:
             st.image("LOGO lUNA ALENCAR.png", use_container_width=True) # Logo na tela de login
-            st.markdown("<h3 style='text-align: center; color: #C5A065;'>ACESSO RESTRITO</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center; color: #C5A065;'>ACESSO</h3>", unsafe_allow_html=True)
             u = st.text_input("Usuário")
             s = st.text_input("Senha", type="password")
             if st.button("ENTRAR", use_container_width=True, type="primary"):
