@@ -17,90 +17,102 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (VISUAL MARROM & DOURADO) ---
+# --- ESTILO CSS DARK PREMIUM (Fundo Escuro e Dourado) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
-        /* Importar fonte elegante */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
         
         html, body, [class*="css"] {
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* Fundo Geral */
+        /* --- FUNDO GERAL (Dark Coffee) --- */
         .stApp {
-            background-color: #FDFBF7; /* Creme muito suave */
+            background-color: #1E1B18; /* Café bem escuro */
+            background-image: linear-gradient(180deg, #1E1B18 0%, #292421 100%);
+            color: #E0E0E0; /* Texto claro */
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (Grandes e Centrais) --- */
+        /* --- BOTÕES DO MENU (Quadrados e Grandes) --- */
         div[data-testid="column"] .stButton button {
-            height: 150px !important;
+            height: 180px !important;   /* Bem alto para ficar quadrado */
             width: 100% !important;
-            background-color: #FFFFFF !important;
-            color: #3E3228 !important; /* Marrom Café */
+            background-color: #2B2522 !important; /* Fundo do cartão */
+            color: #C5A065 !important;  /* Texto Dourado */
             font-size: 22px !important;
             font-weight: 600 !important;
-            border: 2px solid #D4AF37 !important; /* Dourado */
-            border-radius: 15px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+            border: 2px solid #C5A065 !important; /* Borda Dourada */
+            border-radius: 4px !important; /* Cantos levemente arredondados (visual mais quadrado) */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
             transition: all 0.3s ease !important;
-            white-space: normal !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         div[data-testid="column"] .stButton button:hover {
-            background-color: #D4AF37 !important; /* Fundo Dourado ao passar mouse */
-            color: #FFFFFF !important; /* Texto Branco */
-            transform: scale(1.02) !important;
-            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.4) !important;
-            border-color: #3E3228 !important;
+            background-color: #C5A065 !important; /* Preenchimento Dourado */
+            color: #1E1B18 !important; /* Texto Escuro para contraste */
+            transform: translateY(-5px) !important;
+            box-shadow: 0 10px 20px rgba(197, 160, 101, 0.2) !important;
+            border-color: #C5A065 !important;
         }
 
-        /* --- BOTÕES DE AÇÃO (Salvar, Voltar) --- */
+        /* --- BOTÕES DE AÇÃO (Entrar, Sair, Salvar) --- */
         button[kind="primary"] {
-            background-color: #3E3228 !important; /* Marrom */
-            border-color: #3E3228 !important;
-            color: #D4AF37 !important; /* Texto Dourado */
+            background-color: #C5A065 !important; /* Dourado */
+            border-color: #C5A065 !important;
+            color: #1E1B18 !important; /* Texto Escuro */
             font-weight: bold !important;
+            border-radius: 4px !important;
         }
         button[kind="primary"]:hover {
-            background-color: #5C4B3C !important;
-            border-color: #5C4B3C !important;
+            background-color: #E6CFA0 !important; /* Dourado mais claro */
+            border-color: #E6CFA0 !important;
         }
         
-        /* Botão Secundário (Voltar) */
         button[kind="secondary"] {
-            border-color: #3E3228 !important;
-            color: #3E3228 !important;
+            background-color: transparent !important;
+            border-color: #C5A065 !important;
+            color: #C5A065 !important;
         }
 
-        /* --- TEXTOS E TÍTULOS --- */
-        h1, h2, h3 {
-            color: #3E3228 !important;
+        /* --- INPUTS E CAIXAS DE TEXTO (Adaptação para Fundo Escuro) --- */
+        .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
+            background-color: #2B2522 !important;
+            color: #FFFFFF !important;
+            border: 1px solid #555 !important;
         }
         
-        /* Containers e Caixas */
+        /* --- TÍTULOS E TEXTOS --- */
+        h1, h2, h3, h4, h5 {
+            color: #C5A065 !important; /* Títulos Dourados */
+        }
+        p, label, .stMarkdown {
+            color: #E0E0E0 !important;
+        }
+        
+        /* --- CONTAINERS E EXPANDERS --- */
         [data-testid="stExpander"] {
-            background-color: #FFFFFF !important;
-            border: 1px solid #E0E0E0 !important;
-            border-radius: 10px !important;
+            background-color: #2B2522 !important;
+            border: 1px solid #444 !important;
+            border-radius: 8px !important;
+        }
+        [data-testid="stMetricValue"] {
+            color: #C5A065 !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
-# --- CABEÇALHO COM LOGO (Fundo Escuro para Destaque) ---
+# --- CABEÇALHO COM LOGO ---
 def mostrar_cabecalho():
-    # Cria um container visual no topo com a cor da marca
-    # Isso garante que a logo (se tiver letras brancas/douradas) apareça bem
     col_logo1, col_logo2, col_logo3 = st.columns([1, 1, 1])
     with col_logo2:
         try:
-            # Centraliza a imagem. Use_column_width ajusta ao tamanho da coluna central
             st.image("LOGO lUNA ALENCAR.png", use_container_width=True) 
         except:
-            st.warning("⚠️ Logo não encontrada. Faça upload de 'LOGO lUNA ALENCAR.png'")
-    
-    st.markdown("---") # Linha divisória elegante
+            st.warning("⚠️ Logo não encontrada.")
+    st.write("") # Espaço
 
 # --- FUNÇÕES ÚTEIS ---
 def formatar_data(data_iso):
@@ -119,6 +131,7 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
+    # Cabeçalho Tabela
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
@@ -163,10 +176,11 @@ def tela_menu_principal():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     
-    st.markdown(f"<h3 style='text-align: center;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #E0E0E0;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h3>", unsafe_allow_html=True)
+    st.write("") 
     st.write("") 
     
-    # GRID CENTRALIZADO (Botões Grandes)
+    # GRID CENTRALIZADO (Botões Grandes e Quadrados)
     c1, c2 = st.columns(2)
     
     with c1:
@@ -180,14 +194,13 @@ def tela_menu_principal():
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥 USUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            pass # Espaço vazio intencional para manter o grid bonito
+            pass 
         
         if st.button("🔒 MINHA SENHA"): st.session_state['page'] = 'senha'
 
     st.write("")
     st.write("")
     
-    # Botão Sair centralizado e discreto mas visível
     col_s1, col_s2, col_s3 = st.columns([1,1,1])
     with col_s2:
         if st.button("Sair do Sistema", type="primary", use_container_width=True): 
@@ -195,7 +208,7 @@ def tela_menu_principal():
             st.rerun()
 
 def tela_voltar():
-    if st.button("⬅️ VOLTAR AO MENU PRINCIPAL", use_container_width=True):
+    if st.button("⬅️ VOLTAR AO MENU PRINCIPAL"):
         st.session_state['page'] = 'menu'
         st.rerun()
 
@@ -309,7 +322,6 @@ def tela_busca_edicao():
             
             with st.expander(f":{cor_status}[{status_geral}] - 👤 {cli['nome']} {colab_txt}"):
                 
-                # Botão de Arquivar
                 if status_geral == 'Ativo':
                     c_arq1, c_arq2 = st.columns([3, 1])
                     c_arq2.write("") 
@@ -609,7 +621,7 @@ def main():
         c1, c2, c3 = st.columns([1,2,1])
         with c2:
             st.image("LOGO lUNA ALENCAR.png", use_container_width=True) # Logo na tela de login
-            st.markdown("<h3 style='text-align: center;'>Acesso Restrito</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style='text-align: center; color: #C5A065;'>ACESSO RESTRITO</h3>", unsafe_allow_html=True)
             u = st.text_input("Usuário")
             s = st.text_input("Senha", type="password")
             if st.button("ENTRAR", use_container_width=True, type="primary"):
