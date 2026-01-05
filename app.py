@@ -72,7 +72,6 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     total_sai = 0
     
     for item in dados_caixa:
-        # Formata apenas a data
         data_mov = pd.to_datetime(item['data_movimentacao']).strftime('%d/%m/%Y')
         user = item.get('usuario_responsavel', '')[:12]
         desc = item['descricao'][:35].encode('latin-1', 'replace').decode('latin-1')
@@ -163,7 +162,7 @@ def tela_cadastro():
         
         col_p, col_s = st.columns(2)
         
-        # COLUNA DA ESQUERDA - PERÍCIA
+        # PERÍCIA
         with col_p:
             st.markdown("### 🩺 Perícia / Audiência")
             tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
@@ -172,10 +171,9 @@ def tela_cadastro():
             hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
             check_pericia = st.checkbox("Já compareceu nesta Perícia?")
             
-        # COLUNA DA DIREITA - AVALIAÇÃO SOCIAL (AGORA ALINHADA)
+        # AVALIAÇÃO SOCIAL
         with col_s:
             st.markdown("### 📋 Avaliação Social")
-            # Adicionado Seletor de Tipo para alinhar com a coluna da esquerda
             tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
             local_social = st.text_input("Local da Avaliação", value="Agência INSS")
             data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
@@ -215,7 +213,7 @@ def tela_cadastro():
                         dt_full_s = datetime.combine(data_social, hora_social).isoformat()
                         status_s = "Compareceu" if check_social else "Pendente"
                         supabase.table('agendamentos').insert({
-                            "processo_id": proc_id, "tipo_evento": tipo_social, # Salva o tipo escolhido (INSS ou Judicial)
+                            "processo_id": proc_id, "tipo_evento": tipo_social,
                             "data_hora": dt_full_s, "local_cidade": local_social,
                             "status_comparecimento": status_s
                         }).execute()
@@ -234,9 +232,30 @@ def tela_busca_edicao():
         res = supabase.table('clientes').select("*").ilike('nome', f"%{termo}%").order('nome').execute()
         
         for cli in res.data:
+            # Verifica status para cor da caixa
+            status_geral = cli.get('status_geral', 'Ativo')
+            cor_status = "red" if status_geral == 'Arquivado' else "blue"
             colab_txt = f" | Indicado por: {cli['colaborador']}" if cli.get('colaborador') else ""
             
-            with st.expander(f"👤 {cli['nome']} {colab_txt}"):
+            with st.expander(f":{cor_status}[{status_geral}] - 👤 {cli['nome']} {colab_txt}"):
+                
+                # --- AQUI ESTÁ O BOTÃO DE ARQUIVAR QUE VOLTOU ---
+                if status_geral == 'Ativo':
+                    c_arq1, c_arq2 = st.columns([3, 1])
+                    c_arq2.write("") # Espaçamento
+                    with c_arq2.popover("🗑️ Arquivar Cliente"):
+                        motivo = st.text_input("Motivo do arquivamento", key=f"mot_{cli['id']}")
+                        if st.button("Confirmar", key=f"arq_{cli['id']}"):
+                            supabase.table('clientes').update({'status_geral': 'Arquivado', 'motivo_arquivamento': motivo}).eq('id', cli['id']).execute()
+                            st.success("Cliente arquivado!")
+                            st.rerun()
+                else:
+                    st.warning(f"Cliente Arquivado. Motivo: {cli.get('motivo_arquivamento', '-')}")
+                    if st.button("Reativar Cliente", key=f"react_{cli['id']}"):
+                         supabase.table('clientes').update({'status_geral': 'Ativo', 'motivo_arquivamento': None}).eq('id', cli['id']).execute()
+                         st.rerun()
+                # -----------------------------------------------
+
                 with st.form(key=f"edit_cli_{cli['id']}"):
                     st.write("**Dados Pessoais**")
                     c1, c2 = st.columns(2)
@@ -345,7 +364,6 @@ def tela_financeiro():
         
         if filtrados:
             df = pd.DataFrame(filtrados)
-            # Mostra apenas DATA no dataframe (Horário oculto, mas mantendo ordem)
             df['Data'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%d/%m/%Y')
             st.dataframe(df[['Data', 'tipo', 'descricao', 'valor', 'usuario_responsavel']], use_container_width=True)
             
