@@ -58,8 +58,9 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
+    # Cabeçalho Tabela (ALTERADO: Hora -> Data)
     pdf.set_font("Arial", 'B', 10)
-    pdf.cell(25, 10, "Hora", 1)
+    pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
     pdf.cell(65, 10, "Descricao", 1)
     pdf.cell(30, 10, "Usuario", 1)
@@ -71,7 +72,8 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     total_sai = 0
     
     for item in dados_caixa:
-        hora = pd.to_datetime(item['data_movimentacao']).strftime('%H:%M')
+        # Formata apenas a data
+        data_mov = pd.to_datetime(item['data_movimentacao']).strftime('%d/%m/%Y')
         user = item.get('usuario_responsavel', '')[:12]
         desc = item['descricao'][:35].encode('latin-1', 'replace').decode('latin-1')
         val = float(item['valor'])
@@ -83,7 +85,7 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
             total_sai += val
             pdf.set_text_color(200, 0, 0)
             
-        pdf.cell(25, 10, hora, 1)
+        pdf.cell(25, 10, data_mov, 1) # Imprime Data
         pdf.cell(20, 10, item['tipo'], 1)
         pdf.cell(65, 10, desc, 1)
         pdf.cell(30, 10, user, 1)
@@ -149,26 +151,37 @@ def tela_cadastro():
         
         st.divider()
         st.subheader("2. Dados do Processo")
-        c3, c4 = st.columns(2)
+        c3, c4, c5 = st.columns(3)
         servico = c3.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria", "Salário Maternidade", "Pensão", "Outro"])
         num_req = c4.text_input("Nº Requerimento (NB)")
-        situacao = c3.selectbox("Situação", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
+        esfera = c5.selectbox("Esfera", ["Administrativo", "Judicial"])
         
-        # --- AQUI ESTÁ A PARTE QUE TINHA SUMIDO E VOLTOU ---
+        situacao = st.selectbox("Situação Atual", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
+        
         st.divider()
-        st.subheader("3. Agendamento Inicial (Opcional)")
-        c5, c6 = st.columns(2)
-        data_pericia = c5.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
-        hora_pericia = c5.time_input("Hora", value=time(8,0))
-        tipo_pericia = c6.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
-        # ----------------------------------------------------
+        st.subheader("3. Agendamentos Iniciais (Opcional)")
+        
+        col_p, col_s = st.columns(2)
+        
+        with col_p:
+            st.markdown("### 🩺 Perícia / Audiência")
+            tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
+            data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
+            hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
+            check_pericia = st.checkbox("Já compareceu nesta Perícia?")
+            
+        with col_s:
+            st.markdown("### 📋 Avaliação Social")
+            st.write("(Assistente Social)")
+            data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
+            hora_social = st.time_input("Hora Avaliação", value=time(8,0))
+            check_social = st.checkbox("Já compareceu na Avaliação?")
 
         if st.form_submit_button("💾 Salvar Cadastro Completo"):
             if not nome:
                 st.error("Nome é obrigatório.")
             else:
                 try:
-                    # 1. Salvar Cliente
                     d_nasc = str(data_nasc) if data_nasc else None
                     res_cli = supabase.table('clientes').insert({
                         "nome": nome, "cpf": cpf, "email": email, 
@@ -177,24 +190,32 @@ def tela_cadastro():
                     }).execute()
                     cli_id = res_cli.data[0]['id']
                     
-                    # 2. Salvar Processo
                     res_proc = supabase.table('processos').insert({
                         "cliente_id": cli_id, "tipo_beneficio": servico,
-                        "numero_requerimento": num_req, "status_processo": situacao
+                        "numero_requerimento": num_req, "status_processo": situacao,
+                        "esfera": esfera
                     }).execute()
                     proc_id = res_proc.data[0]['id']
 
-                    # 3. Salvar Agendamento (Se preenchido)
                     if data_pericia:
                         dt_full = datetime.combine(data_pericia, hora_pericia).isoformat()
+                        status_p = "Compareceu" if check_pericia else "Pendente"
                         supabase.table('agendamentos').insert({
-                            "processo_id": proc_id,
-                            "tipo_evento": tipo_pericia,
-                            "data_hora": dt_full,
-                            "local_cidade": "A Definir"
+                            "processo_id": proc_id, "tipo_evento": tipo_pericia,
+                            "data_hora": dt_full, "local_cidade": f"{esfera} (A Definir)",
+                            "status_comparecimento": status_p
+                        }).execute()
+                        
+                    if data_social:
+                        dt_full_s = datetime.combine(data_social, hora_social).isoformat()
+                        status_s = "Compareceu" if check_social else "Pendente"
+                        supabase.table('agendamentos').insert({
+                            "processo_id": proc_id, "tipo_evento": "Avaliação Social",
+                            "data_hora": dt_full_s, "local_cidade": "INSS",
+                            "status_comparecimento": status_s
                         }).execute()
 
-                    st.success(f"Cadastro realizado com sucesso! Cliente: {nome}")
+                    st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
                 except Exception as e:
                     st.error(f"Erro ao salvar: {e}")
 
@@ -232,29 +253,37 @@ def tela_busca_edicao():
                 
                 for p in procs:
                     with st.container(border=True):
-                        c_p1, c_p2, c_p3 = st.columns([2, 2, 1])
+                        c_p1, c_p2, c_p3, c_p4 = st.columns([2, 1.5, 1.5, 1])
                         c_p1.write(f"**{p['tipo_beneficio']}**")
+                        
+                        esfera_atual = p.get('esfera', 'Administrativo')
+                        if not esfera_atual: esfera_atual = 'Administrativo'
+                        nova_esfera = c_p2.selectbox("Esfera", ["Administrativo", "Judicial"], key=f"esf_{p['id']}", index=["Administrativo", "Judicial"].index(esfera_atual))
                         
                         lista_status = ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia", "Judicial"]
                         idx_status = lista_status.index(p['status_processo']) if p['status_processo'] in lista_status else 0
+                        novo_status = c_p3.selectbox("Status", lista_status, key=f"st_{p['id']}", index=idx_status)
                         
-                        novo_status = c_p2.selectbox("Status", lista_status, key=f"st_{p['id']}", index=idx_status)
-                        
-                        if c_p3.button("Salvar Status", key=f"bt_{p['id']}"):
-                            supabase.table('processos').update({"status_processo": novo_status}).eq('id', p['id']).execute()
-                            st.toast("Status atualizado!")
+                        if c_p4.button("💾", key=f"bt_{p['id']}", help="Salvar Alterações"):
+                            supabase.table('processos').update({
+                                "status_processo": novo_status,
+                                "esfera": nova_esfera
+                            }).eq('id', p['id']).execute()
+                            st.toast("Atualizado com sucesso!")
                             st.rerun()
 
                 with st.popover("➕ Adicionar Processo"):
                     st.write("Novo Processo para este cliente")
                     with st.form(key=f"form_add_p_{cli['id']}"):
                         serv_novo = st.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria"], key=f"new_serv_{cli['id']}")
+                        esfera_novo = st.selectbox("Esfera", ["Administrativo", "Judicial"], key=f"new_esf_{cli['id']}")
                         nb_novo = st.text_input("Nº Requerimento", key=f"nb_{cli['id']}")
                         
                         if st.form_submit_button("Criar"):
                             supabase.table('processos').insert({
                                 "cliente_id": cli['id'], "tipo_beneficio": serv_novo, 
-                                "numero_requerimento": nb_novo, "status_processo": "Em Análise"
+                                "numero_requerimento": nb_novo, "status_processo": "Em Análise",
+                                "esfera": esfera_novo
                             }).execute()
                             st.rerun()
 
@@ -275,11 +304,12 @@ def tela_agenda():
             if dt.month == mes and dt.year == ano:
                 a['Data'] = formatar_data_hora(a['data_hora'])
                 a['Cliente'] = a['processos']['clientes']['nome']
+                a['Status'] = a.get('status_comparecimento', 'Pendente') 
                 dados.append(a)
     
     if dados:
         df = pd.DataFrame(dados)
-        st.dataframe(df[['Data', 'Cliente', 'tipo_evento', 'local_cidade']], use_container_width=True)
+        st.dataframe(df[['Data', 'Cliente', 'tipo_evento', 'Status', 'local_cidade']], use_container_width=True)
     else:
         st.info("Nada agendado.")
 
@@ -310,8 +340,9 @@ def tela_financeiro():
         
         if filtrados:
             df = pd.DataFrame(filtrados)
-            df['Hora'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%H:%M')
-            st.dataframe(df[['Hora', 'tipo', 'descricao', 'valor', 'usuario_responsavel']], use_container_width=True)
+            # Mostra apenas DATA no dataframe
+            df['Data'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%d/%m/%Y')
+            st.dataframe(df[['Data', 'tipo', 'descricao', 'valor', 'usuario_responsavel']], use_container_width=True)
             
             if st.button("📄 Baixar PDF do Dia"):
                 pdf = gerar_pdf_caixa(filtrados, data_f)
@@ -366,9 +397,9 @@ def tela_financeiro():
         cli_selecionado = st.selectbox("Selecione o Cliente", options=list(clientes_dict.keys()), format_func=lambda x: clientes_dict[x])
         
         if cli_selecionado:
-            proc_res = supabase.table('processos').select("id, tipo_beneficio, numero_requerimento").eq('cliente_id', cli_selecionado).execute()
+            proc_res = supabase.table('processos').select("id, tipo_beneficio, numero_requerimento, esfera").eq('cliente_id', cli_selecionado).execute()
             if proc_res.data:
-                proc_dict = {p['id']: f"{p['tipo_beneficio']} (NB: {p.get('numero_requerimento', '-')})" for p in proc_res.data}
+                proc_dict = {p['id']: f"{p['tipo_beneficio']} - {p.get('esfera', 'Adm')} (NB: {p.get('numero_requerimento', '-')})" for p in proc_res.data}
                 proc_id = st.selectbox("Vincular ao Processo:", options=list(proc_dict.keys()), format_func=lambda x: proc_dict[x])
                 
                 st.divider()
