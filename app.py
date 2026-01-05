@@ -33,7 +33,7 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- CORREÇÃO DOS BOTÕES DO MENU (QUADRADOS FIXOS) --- */
+        /* --- CORREÇÃO DEFINITIVA DOS BOTÕES (QUADRADOS FIXOS) --- */
         
         /* 1. Centralizar o botão dentro da coluna */
         div[data-testid="column"] .stButton {
@@ -45,8 +45,8 @@ def aplicar_estilo_visual():
 
         /* 2. Definir tamanho fixo e estilo do botão */
         div[data-testid="column"] .stButton button {
-            width: 200px !important;      /* LARGURA TRAVADA */
-            height: 200px !important;     /* ALTURA TRAVADA (Igual a largura) */
+            width: 220px !important;      /* LARGURA TRAVADA */
+            height: 220px !important;     /* ALTURA TRAVADA (Igual a largura) */
             
             background-color: #C5A065 !important; /* DOURADO */
             color: #1E1B18 !important;            /* PRETO */
@@ -54,7 +54,7 @@ def aplicar_estilo_visual():
             font-size: 18px !important;
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 8px !important;
+            border-radius: 12px !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
             
             /* Centralizar o texto dentro do quadrado */
