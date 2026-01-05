@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (BOTÕES GIGANTES E SAIR DISCRETO) ---
+# --- ESTILO CSS (BOTÕES GIGANTES, QUADRADOS E ALINHADOS) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,31 +33,21 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- CORREÇÃO DEFINITIVA DOS BOTÕES (QUADRADOS GIGANTES FIXOS) --- */
-        
-        /* 1. Centralizar o botão dentro da coluna */
-        div[data-testid="column"] .stButton {
-            display: flex;
-            justify-content: center; /* Centraliza horizontalmente */
-            align-items: center;
-            width: 100%;
-        }
-
-        /* 2. Definir tamanho fixo GIGANTE e estilo do botão */
+        /* --- BOTÕES DO MENU (GIGANTES E ALINHADOS) --- */
         div[data-testid="column"] .stButton button {
-            width: 300px !important;      /* LARGURA GIGANTE TRAVADA */
-            height: 300px !important;     /* ALTURA GIGANTE TRAVADA (Igual a largura) */
+            width: 100% !important;
+            height: 240px !important;     /* ALTURA GIGANTE FIXA */
             
             background-color: #C5A065 !important; /* DOURADO */
             color: #1E1B18 !important;            /* PRETO */
             
-            font-size: 22px !important; /* Fonte maior para acompanhar o botão */
+            font-size: 24px !important;
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 16px !important; /* Cantos mais arredondados */
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6) !important;
             
-            /* Centralizar o texto dentro do quadrado */
+            /* Centralização Total */
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
@@ -67,34 +57,27 @@ def aplicar_estilo_visual():
             transition: all 0.3s ease !important;
             text-transform: uppercase;
             letter-spacing: 2px;
-            white-space: pre-wrap !important; /* Permite quebra de linha */
-            margin: 0 auto !important; /* Margem automática para garantir centro */
+            white-space: pre-wrap !important;
+            margin-bottom: 25px !important;
         }
         
-        /* Efeito Hover (Passar o mouse) */
         div[data-testid="column"] .stButton button:hover {
             background-color: #D4AF37 !important; 
-            transform: scale(1.03) !important; /* Cresce um pouco menos pois já é grande */
-            box-shadow: 0 12px 35px rgba(197, 160, 101, 0.5) !important;
+            transform: scale(1.02) !important;
+            box-shadow: 0 15px 40px rgba(197, 160, 101, 0.4) !important;
             color: #000000 !important;
             z-index: 999;
         }
 
-        /* --- BOTÕES DE AÇÃO (Sair, Salvar - MENORES E CENTRALIZADOS) --- */
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar) --- */
         button[kind="primary"] {
             background-color: #C5A065 !important;
             color: #1E1B18 !important;
             border: none !important;
             font-weight: bold !important;
             text-transform: uppercase;
-            
-            /* Tamanho fixo menor para o botão de Sair/Salvar */
-            width: 200px !important; 
             height: 50px !important;
-            
-            /* Centralizar o botão */
-            margin: 0 auto !important;
-            display: block !important;
+            border-radius: 6px !important;
         }
         button[kind="primary"]:hover {
             background-color: #E6CFA0 !important;
@@ -107,19 +90,18 @@ def aplicar_estilo_visual():
             height: 50px !important;
         }
 
-        /* --- INPUTS E TEXTO (Fundo Escuro) --- */
-        .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
+        /* --- INPUTS --- */
+        .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea, .stNumberInput input {
             background-color: #3A302C !important; 
             color: #FFFFFF !important;
             border: 1px solid #5C4B3C !important;
-            border-radius: 4px !important;
+            border-radius: 6px !important;
         }
         
-        /* --- LABELS BRANCOS (Login legível) --- */
-        .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label {
+        /* --- TEXTOS BRANCOS --- */
+        .stTextInput label, .stSelectbox label, .stDateInput label, .stNumberInput label {
             color: #FFFFFF !important;
-            font-size: 15px !important;
-            font-weight: 500 !important;
+            font-size: 16px !important;
         }
         
         /* --- TÍTULOS --- */
@@ -208,69 +190,54 @@ def tela_menu_principal():
     
     st.markdown(f"<h4 style='text-align: center; color: #E0E0E0; font-weight: 300;'>Bem-vindo(a), {st.session_state['usuario']['nome']}</h4>", unsafe_allow_html=True)
     st.write("") 
-    st.write("") 
     
-    # --- LAYOUT CENTRALIZADO ---
-    # Colunas de espaçamento (1) e colunas de conteúdo (2)
-    # [1, 2, 2, 1] cria um respiro nas laterais e foca no centro
-    c_esq, c_col1, c_col2, c_dir = st.columns([1, 2, 2, 1])
+    # --- LAYOUT EM GRADES 3x2 ---
+    # Colunas: [Espaço, Botão, Botão, Espaço]
+    c_esq, c1, c2, c_dir = st.columns([1, 3, 3, 1], gap="large")
     
-    # Botão 1: AGENDAMENTOS
-    with c_col1:
-        if st.button("📅\n\nAGENDAMENTOS", key="btn_agenda"): 
+    # LINHA 1
+    with c1:
+        if st.button("📅\n\nAGENDAMENTOS", key="bt_age"): 
             st.session_state['page'] = 'agenda'
             st.rerun()
-            
-    # Botão 2: NOVO CADASTRO
-    with c_col2:
-        if st.button("➕\n\nNOVO CADASTRO", key="btn_cadastro"): 
-            st.session_state['page'] = 'cadastro'
-            st.rerun()
-
-    # --- LINHA 2 ---
-    st.write("") # Espaço vertical
-    
-    c_esq2, c_col3, c_col4, c_dir2 = st.columns([1, 2, 2, 1])
-    
-    with c_col3:
-        if st.button("🔍\n\nBUSCAR / EDITAR", key="btn_busca"): 
+    with c2:
+        if st.button("🔍\n\nBUSCAR / EDITAR", key="bt_bus"): 
             st.session_state['page'] = 'busca'
             st.rerun()
             
-    with c_col4:
-        # Lógica para mostrar Usuários ou um espaço vazio
+    # LINHA 2
+    with c1:
+        if st.button("💰\n\nFINANCEIRO", key="bt_fin"): 
+            st.session_state['page'] = 'financeiro'
+            st.rerun()
+    with c2:
+        if st.button("➕\n\nNOVO CADASTRO", key="bt_cad"): 
+            st.session_state['page'] = 'cadastro'
+            st.rerun()
+            
+    # LINHA 3 (Usuários e Senha)
+    with c1:
         if st.session_state['usuario'].get('perfil') == 'admin':
-            if st.button("👥\n\nUSUÁRIOS", key="btn_users"): 
+            if st.button("👥\n\nUSUÁRIOS", key="bt_user"): 
                 st.session_state['page'] = 'usuarios'
                 st.rerun()
         else:
-            # Placeholder vazio para manter o grid alinhado (Altura 300px agora)
-            st.markdown("<div style='height: 300px;'></div>", unsafe_allow_html=True)
-
-    # --- LINHA 3 ---
-    st.write("")
+            # Espaço vazio mantendo o layout
+            st.markdown("<div style='height: 240px; margin-bottom: 25px;'></div>", unsafe_allow_html=True)
     
-    c_esq3, c_col5, c_col6, c_dir3 = st.columns([1, 2, 2, 1])
-    
-    with c_col5:
-        if st.button("💰\n\nFINANCEIRO", key="btn_fin"): 
-            st.session_state['page'] = 'financeiro'
-            st.rerun()
-            
-    with c_col6:
-        if st.button("🔒\n\nMINHA SENHA", key="btn_senha"): 
-            st.session_state['page'] = 'senha'
+    with c2:
+        if st.button("🔒\n\nMEUS DADOS", key="bt_pass"): 
+            st.session_state['page'] = 'meus_dados'
             st.rerun()
 
     st.write("")
     st.write("")
     st.divider()
     
-    # Botão Sair centralizado
-    c1, c2, c3 = st.columns([1,1,1])
-    with c2:
-        # O CSS agora cuida do tamanho menor e centralização deste botão
-        if st.button("SAIR DO SISTEMA", type="primary"): 
+    # Botão Sair menor e centralizado
+    col_s1, col_s2, col_s3 = st.columns([1,1,1])
+    with col_s2:
+        if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
             st.session_state.clear()
             st.rerun()
 
@@ -328,7 +295,7 @@ def tela_cadastro():
                 check_social = st.checkbox("Já compareceu na Avaliação?")
 
             st.write("")
-            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary"):
+            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary", use_container_width=True):
                 if not nome:
                     st.error("Nome é obrigatório.")
                 else:
@@ -492,8 +459,9 @@ def tela_financeiro():
     tela_voltar()
     st.markdown("<h2 style='text-align: center;'>Financeiro</h2>", unsafe_allow_html=True)
     
-    abas = st.tabs(["Fluxo de Caixa", "Contratos", "Novo Contrato"])
+    abas = st.tabs(["Fluxo de Caixa", "Gestão & Recibos", "Novo Contrato"])
     
+    # ABA 1: CAIXA
     with abas[0]:
         st.subheader("Movimento do Dia")
         data_f = st.date_input("Filtrar Data", value=date.today(), format="DD/MM/YYYY")
@@ -534,46 +502,84 @@ def tela_financeiro():
         else:
             st.info("Sem movimentos nesta data.")
 
+    # ABA 2: GESTÃO (Parcelas e Recibos)
     with abas[1]:
-        st.subheader("Recebimentos Pendentes")
-        pendentes = supabase.table('parcelas').select("*, contratos(id, processos(id, clientes(nome)))").is_("data_pagamento", "null").order('data_vencimento').execute()
+        tipo_gestao = st.radio("Selecione o tipo de cobrança:", ["Parcelas Fixas (Promissórias)", "Recibos 30% (Auxílio/Recorrente)"], horizontal=True)
         
-        if pendentes.data:
-            for p in pendentes.data:
-                try:
-                    cli_nome = p['contratos']['processos']['clientes']['nome']
-                except: cli_nome = "Desconhecido"
-                
-                venc = formatar_data(p['data_vencimento'])
-                dt_venc = pd.to_datetime(p['data_vencimento']).date()
-                atraso = (date.today() - dt_venc).days
-                cor = "red" if atraso > 0 else "blue"
-                
-                with st.expander(f":{cor}[{venc}] | {cli_nome} | R$ {p['valor_parcela']:.2f}"):
-                    c1, c2 = st.columns([2,1])
-                    c1.write(f"Parcela {p['numero_parcela']}")
-                    forma = c1.selectbox("Forma", ["Dinheiro", "Pix"], key=f"f_{p['id']}")
+        if tipo_gestao == "Parcelas Fixas (Promissórias)":
+            st.subheader("Parcelas Pendentes")
+            pendentes = supabase.table('parcelas').select("*, contratos(id, processos(id, clientes(nome)))").is_("data_pagamento", "null").order('data_vencimento').execute()
+            
+            if pendentes.data:
+                for p in pendentes.data:
+                    try:
+                        cli_nome = p['contratos']['processos']['clientes']['nome']
+                    except: cli_nome = "Desconhecido"
                     
-                    if c2.button("✅ Baixar", key=f"rec_{p['id']}"):
-                        supabase.table('parcelas').update({
-                            "data_pagamento": date.today().isoformat(),
-                            "valor_pago": p['valor_parcela'],
-                            "forma_pagamento": forma
-                        }).eq('id', p['id']).execute()
+                    venc = formatar_data(p['data_vencimento'])
+                    cor = "red" if (date.today() - pd.to_datetime(p['data_vencimento']).date()).days > 0 else "blue"
+                    
+                    with st.expander(f":{cor}[{venc}] | {cli_nome} | R$ {p['valor_parcela']:.2f}"):
+                        c1, c2 = st.columns([2,1])
+                        c1.write(f"Parcela {p['numero_parcela']}")
+                        forma = c1.selectbox("Forma", ["Dinheiro", "Pix"], key=f"f_{p['id']}")
                         
+                        if c2.button("✅ Baixar", key=f"rec_{p['id']}"):
+                            supabase.table('parcelas').update({
+                                "data_pagamento": date.today().isoformat(),
+                                "valor_pago": p['valor_parcela'],
+                                "forma_pagamento": forma
+                            }).eq('id', p['id']).execute()
+                            
+                            user_atual = st.session_state['usuario']['usuario']
+                            desc = f"Receb. Parc {p['numero_parcela']} - {cli_nome}"
+                            supabase.table('caixa').insert({
+                                "tipo": "Entrada", "descricao": desc, "valor": p['valor_parcela'],
+                                "usuario_responsavel": user_atual,
+                                "data_movimentacao": datetime.now().isoformat()
+                            }).execute()
+                            st.success("Baixado!")
+                            st.rerun()
+            else:
+                st.info("Nenhuma parcela fixa pendente.")
+        
+        else:
+            # GESTÃO DE RECIBOS 30%
+            st.subheader("Cálculo e Baixa de Honorários (30%)")
+            
+            # Buscar clientes com contratos Recorrentes (onde qtd_parcelas = 0 ou tipo_cobranca = Recorrente)
+            # Para simplificar, buscaremos todos os clientes ativos e o usuário seleciona
+            cli_res = supabase.table('clientes').select("id, nome").order('nome').execute()
+            clientes_dict = {c['id']: c['nome'] for c in cli_res.data}
+            cli_sel = st.selectbox("Selecione o Cliente (Auxílio Doença)", options=list(clientes_dict.keys()), format_func=lambda x: clientes_dict[x])
+            
+            if cli_sel:
+                st.write(f"Cliente: **{clientes_dict[cli_sel]}**")
+                
+                col_v1, col_v2 = st.columns(2)
+                valor_recebido = col_v1.number_input("Valor Recebido pelo Cliente (R$)", min_value=0.0, step=100.0)
+                
+                if valor_recebido > 0:
+                    valor_honorario = valor_recebido * 0.30
+                    col_v2.metric("Honorários (30%)", f"R$ {valor_honorario:.2f}")
+                    
+                    forma_rec = st.selectbox("Forma de Pagamento", ["Dinheiro", "Pix", "Transferência"])
+                    
+                    if st.button("💰 Lançar e Baixar no Caixa", type="primary"):
                         user_atual = st.session_state['usuario']['usuario']
-                        desc = f"Receb. Parc {p['numero_parcela']} - {cli_nome}"
+                        mes_atual = datetime.now().strftime('%m/%Y')
+                        desc = f"Honorários 30% - {clientes_dict[cli_sel]} ({mes_atual})"
+                        
                         supabase.table('caixa').insert({
-                            "tipo": "Entrada", "descricao": desc, "valor": p['valor_parcela'],
+                            "tipo": "Entrada", "descricao": desc, "valor": valor_honorario,
                             "usuario_responsavel": user_atual,
+                            "forma_pagamento": forma_rec,
                             "data_movimentacao": datetime.now().isoformat()
                         }).execute()
-                        
-                        st.success(f"Baixado por {user_atual}!")
+                        st.success(f"Recebimento de R$ {valor_honorario:.2f} lançado!")
                         st.rerun()
-        else:
-            st.info("Nenhuma parcela pendente.")
 
+    # ABA 3: NOVO CONTRATO (ATUALIZADO)
     with abas[2]:
         st.subheader("Novo Contrato")
         
@@ -582,54 +588,75 @@ def tela_financeiro():
         cli_selecionado = st.selectbox("Selecione o Cliente", options=list(clientes_dict.keys()), format_func=lambda x: clientes_dict[x])
         
         if cli_selecionado:
-            proc_res = supabase.table('processos').select("id, tipo_beneficio, numero_requerimento, esfera").eq('cliente_id', cli_selecionado).execute()
+            proc_res = supabase.table('processos').select("id, tipo_beneficio, numero_requerimento").eq('cliente_id', cli_selecionado).execute()
             if proc_res.data:
-                proc_dict = {p['id']: f"{p['tipo_beneficio']} - {p.get('esfera', 'Adm')} (NB: {p.get('numero_requerimento', '-')})" for p in proc_res.data}
+                proc_dict = {p['id']: f"{p['tipo_beneficio']} (NB: {p.get('numero_requerimento', '-')})" for p in proc_res.data}
                 proc_id = st.selectbox("Vincular ao Processo:", options=list(proc_dict.keys()), format_func=lambda x: proc_dict[x])
                 
                 st.divider()
-                c_val1, c_val2 = st.columns(2)
-                valor_total = c_val1.number_input("Valor Total (R$)", min_value=0.0, step=100.0)
-                valor_entrada = c_val2.number_input("Entrada (R$)", min_value=0.0, step=50.0)
                 
-                c_parc1, c_parc2 = st.columns(2)
-                qtd_parcelas = c_parc1.number_input("Qtd Parcelas", min_value=1, value=1)
-                vencimento_inicial = c_parc2.date_input("Vencimento 1ª Parcela", format="DD/MM/YYYY")
+                # SELETOR DE TIPO DE CONTRATO
+                tipo_contrato = st.radio("Tipo de Cobrança", ["Valor Fixo (Promissórias)", "Recorrente (30% do Benefício/Recibo)"])
                 
-                saldo = valor_total - valor_entrada
-                if saldo > 0:
-                    st.info(f"Serão geradas {qtd_parcelas} parcelas de R$ {saldo/qtd_parcelas:.2f}")
-                
-                if st.button("Gerar Contrato", type="primary"):
-                    if valor_total <= 0:
-                        st.error("Valor inválido.")
-                    else:
-                        res_cont = supabase.table('contratos').insert({
-                            "processo_id": proc_id, "valor_total": valor_total,
-                            "valor_entrada": valor_entrada, "qtd_parcelas": qtd_parcelas
-                        }).execute()
-                        contrato_id = res_cont.data[0]['id']
-                        
-                        if valor_entrada > 0:
-                             supabase.table('caixa').insert({
-                                "tipo": "Entrada", "descricao": f"Entrada Honorários - {clientes_dict[cli_selecionado]}",
-                                "valor": valor_entrada, "forma_pagamento": "Dinheiro",
-                                "usuario_responsavel": st.session_state['usuario']['usuario']
+                if tipo_contrato == "Valor Fixo (Promissórias)":
+                    c_val1, c_val2 = st.columns(2)
+                    valor_total = c_val1.number_input("Valor Total (R$)", min_value=0.0, step=100.0)
+                    valor_entrada = c_val2.number_input("Entrada (R$)", min_value=0.0, step=50.0)
+                    
+                    c_parc1, c_parc2 = st.columns(2)
+                    qtd_parcelas = c_parc1.number_input("Qtd Parcelas", min_value=1, value=1)
+                    vencimento_inicial = c_parc2.date_input("Vencimento 1ª Parcela", format="DD/MM/YYYY")
+                    
+                    saldo = valor_total - valor_entrada
+                    if saldo > 0:
+                        st.info(f"Serão geradas {qtd_parcelas} parcelas de R$ {saldo/qtd_parcelas:.2f}")
+                    
+                    if st.button("Gerar Contrato Fixo", type="primary"):
+                        if valor_total <= 0:
+                            st.error("Valor inválido.")
+                        else:
+                            res_cont = supabase.table('contratos').insert({
+                                "processo_id": proc_id, "valor_total": valor_total,
+                                "valor_entrada": valor_entrada, "qtd_parcelas": qtd_parcelas,
+                                "tipo_cobranca": "Fixa"
                             }).execute()
-
-                        if saldo > 0:
-                            val_p = round(saldo / qtd_parcelas, 2)
-                            diff = round(saldo - (val_p * qtd_parcelas), 2)
-                            for i in range(qtd_parcelas):
-                                valor_desta = val_p + diff if i == qtd_parcelas - 1 else val_p
-                                data_venc = vencimento_inicial + relativedelta(months=i)
-                                supabase.table('parcelas').insert({
-                                    "contrato_id": contrato_id, "numero_parcela": i+1,
-                                    "valor_parcela": valor_desta, "data_vencimento": str(data_venc),
-                                    "forma_pagamento": "Pendente"
+                            contrato_id = res_cont.data[0]['id']
+                            
+                            # Lança Entrada
+                            if valor_entrada > 0:
+                                 supabase.table('caixa').insert({
+                                    "tipo": "Entrada", "descricao": f"Entrada Honorários - {clientes_dict[cli_selecionado]}",
+                                    "valor": valor_entrada, "forma_pagamento": "Dinheiro",
+                                    "usuario_responsavel": st.session_state['usuario']['usuario']
                                 }).execute()
-                        
-                        st.success("Contrato Gerado!")
+
+                            # Gera Parcelas
+                            if saldo > 0:
+                                val_p = round(saldo / qtd_parcelas, 2)
+                                diff = round(saldo - (val_p * qtd_parcelas), 2)
+                                for i in range(qtd_parcelas):
+                                    valor_desta = val_p + diff if i == qtd_parcelas - 1 else val_p
+                                    data_venc = vencimento_inicial + relativedelta(months=i)
+                                    supabase.table('parcelas').insert({
+                                        "contrato_id": contrato_id, "numero_parcela": i+1,
+                                        "valor_parcela": valor_desta, "data_vencimento": str(data_venc),
+                                        "forma_pagamento": "Pendente"
+                                    }).execute()
+                            
+                            st.success("Contrato de Promissórias Gerado!")
+                            st.rerun()
+                
+                else: # CONTRATO RECORRENTE 30%
+                    st.info("ℹ️ Este contrato não gera parcelas fixas. Todo mês você deverá lançar o valor recebido na aba 'Gestão & Recibos'.")
+                    if st.button("Salvar Contrato de 30%", type="primary"):
+                        supabase.table('contratos').insert({
+                            "processo_id": proc_id, 
+                            "valor_total": 0, # Indefinido
+                            "valor_entrada": 0,
+                            "qtd_parcelas": 0,
+                            "tipo_cobranca": "Recorrente"
+                        }).execute()
+                        st.success("Contrato de 30% Salvo! Vá em 'Gestão & Recibos' para lançar pagamentos.")
                         st.rerun()
             else:
                 st.warning("Este cliente não tem processos cadastrados.")
@@ -660,19 +687,31 @@ def tela_usuarios():
             except:
                 st.error("Erro. Talvez o login já exista.")
 
-def tela_senha():
+def tela_meus_dados():
     aplicar_estilo_visual()
     mostrar_cabecalho()
     tela_voltar()
-    st.title("🔒 Alterar Senha")
+    st.title("🔒 Meus Dados")
     
-    senha_nova = st.text_input("Nova Senha", type="password")
-    if st.button("Confirmar Alteração", type="primary"):
-        meu_id = st.session_state['usuario']['id']
-        supabase.table('usuarios').update({"senha": senha_nova}).eq('id', meu_id).execute()
-        st.success("Senha alterada! Faça login novamente.")
-        st.session_state.clear()
-        st.rerun()
+    # Carregar dados atuais
+    meu_id = st.session_state['usuario']['id']
+    dados_atuais = supabase.table('usuarios').select("*").eq('id', meu_id).execute().data[0]
+    
+    with st.form("form_meus_dados"):
+        st.write("Atualize seus dados abaixo:")
+        novo_nome = st.text_input("Meu Nome", value=dados_atuais['nome'])
+        nova_senha = st.text_input("Nova Senha", type="password", value=dados_atuais['senha'])
+        
+        if st.form_submit_button("💾 Salvar Alterações", type="primary"):
+            supabase.table('usuarios').update({
+                "nome": novo_nome, 
+                "senha": nova_senha
+            }).eq('id', meu_id).execute()
+            
+            # Atualiza sessão
+            st.session_state['usuario']['nome'] = novo_nome
+            st.success("Dados atualizados com sucesso!")
+            st.rerun()
 
 # --- CONTROLE DE NAVEGAÇÃO ---
 def main():
@@ -680,12 +719,11 @@ def main():
         # TELA DE LOGIN ESTILIZADA
         aplicar_estilo_visual()
         
-        # Centralizar Login verticalmente e horizontalmente
         st.write("")
         st.write("")
         c1, c2, c3 = st.columns([1,2,1])
         with c2:
-            st.image("LOGO lUNA ALENCAR.png", use_container_width=True) # Logo na tela de login
+            st.image("LOGO lUNA ALENCAR.png", use_container_width=True)
             st.markdown("<h3 style='text-align: center; color: #C5A065;'>ACESSO</h3>", unsafe_allow_html=True)
             u = st.text_input("Usuário")
             s = st.text_input("Senha", type="password")
@@ -707,7 +745,8 @@ def main():
         elif pg == 'agenda': tela_agenda()
         elif pg == 'financeiro': tela_financeiro()
         elif pg == 'usuarios': tela_usuarios()
-        elif pg == 'senha': tela_senha()
+        elif pg == 'meus_dados': tela_meus_dados() # Nova rota
+        elif pg == 'senha': tela_meus_dados()      # Retrocompatibilidade
 
 if __name__ == "__main__":
     main()
