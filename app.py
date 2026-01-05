@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from fpdf import FPDF
 
 # --- CONFIGURAÇÃO VISUAL ---
-st.set_page_config(page_title="Sistema Luna Alencar", layout="wide", page_icon="⚖️")
+st.set_page_config(page_title="Luna Alencar Advogados", layout="wide", page_icon="⚖️")
 
 # --- CONEXÃO COM O BANCO ---
 try:
@@ -17,26 +17,78 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- FUNÇÕES DE ESTILO (CSS TURBO - BOTÕES GRANDES) ---
-def aplicar_estilo_menu():
+# --- ESTILO CSS PREMIUM (BASEADO NA LOGO) ---
+def aplicar_estilo_premium():
     st.markdown("""
     <style>
-        div[data-testid="column"] .stButton button {
-            height: 150px !important;
-            width: 100% !important;
-            font-size: 24px !important;
-            font-weight: 700 !important;
-            border-radius: 15px !important;
-            border: 1px solid #ccc !important;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1) !important;
-            transition: all 0.3s ease !important;
-            white-space: normal !important;
+        /* Importar fonte elegante (opcional, usa a do sistema se falhar) */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+        
+        html, body, [class*="css"] {
+            font-family: 'Montserrat', sans-serif;
         }
+
+        /* Cor de Fundo Geral - Clean */
+        .stApp {
+            background-color: #FAFAFA; /* Off-white muito suave */
+        }
+
+        /* --- SIDEBAR (Barra Lateral) --- */
+        [data-testid="stSidebar"] {
+            background-color: #2C2420; /* Marrom Café da Logo */
+        }
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
+            color: #E0E0E0 !important; /* Texto claro no menu */
+        }
+
+        /* --- BOTÕES DO MENU PRINCIPAL (Cartões Dourados) --- */
+        div[data-testid="column"] .stButton button {
+            height: 140px !important;
+            width: 100% !important;
+            background-color: #FFFFFF !important;
+            color: #2C2420 !important; /* Texto Marrom */
+            font-size: 20px !important;
+            font-weight: 600 !important;
+            border: 2px solid #C5A065 !important; /* Borda Dourada */
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+            transition: all 0.3s ease !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+        }
+        
         div[data-testid="column"] .stButton button:hover {
-            transform: scale(1.03) !important;
-            border-color: #ff4b4b !important;
-            box-shadow: 0 6px 10px rgba(0,0,0,0.15) !important;
-            z-index: 999 !important;
+            background-color: #C5A065 !important; /* Fundo Dourado ao passar o mouse */
+            color: #FFFFFF !important; /* Texto Branco */
+            transform: translateY(-5px) !important;
+            box-shadow: 0 10px 15px rgba(197, 160, 101, 0.3) !important;
+        }
+
+        /* --- BOTÕES NORMAIS (Pequenos) --- */
+        .stButton button {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        /* Botão Primário (Sair, Salvar) */
+        button[kind="primary"] {
+            background-color: #C5A065 !important;
+            border-color: #C5A065 !important;
+            color: white !important;
+        }
+        button[kind="primary"]:hover {
+            background-color: #B08D55 !important;
+            border-color: #B08D55 !important;
+        }
+
+        /* --- TÍTULOS E TEXTOS --- */
+        h1, h2, h3 {
+            color: #2C2420 !important; /* Títulos em Marrom Escuro */
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Ajuste de metricas (Financeiro) */
+        [data-testid="stMetricValue"] {
+            color: #C5A065 !important; /* Números em Dourado */
         }
     </style>
     """, unsafe_allow_html=True)
@@ -58,7 +110,6 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
-    # Cabeçalho Tabela (Data apenas)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
@@ -97,40 +148,58 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, f"SALDO DO DIA: R$ {total_ent - total_sai:.2f}", ln=True)
     return pdf.output(dest='S').encode('latin-1')
 
+# --- EXIBIÇÃO DA LOGO ---
+def mostrar_logo_sidebar():
+    try:
+        # Tenta carregar a imagem. Se der erro (arquivo nao existe), ignora para nao quebrar o app
+        st.sidebar.image("LOGO lUNA ALENCAR.png", use_container_width=True)
+        st.sidebar.markdown("---")
+    except:
+        st.sidebar.warning("Logo não encontrada (Upload necessário)")
+
 # --- TELAS DO SISTEMA ---
 
 def tela_menu_principal():
-    aplicar_estilo_menu()
+    aplicar_estilo_premium()
+    mostrar_logo_sidebar()
     
-    st.title("⚖️ Painel Principal")
-    st.write(f"Bem-vindo(a), **{st.session_state['usuario']['nome']}**")
+    st.sidebar.write(f"Olá, **{st.session_state['usuario']['nome']}**")
+    
+    # Título elegante
+    st.markdown("<h1 style='text-align: center; color: #2C2420;'>PAINEL DE CONTROLE</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #666;'>Selecione uma opção abaixo</p>", unsafe_allow_html=True)
+    st.write("") 
     st.write("") 
     
     c1, c2 = st.columns(2)
     
     with c1:
-        if st.button("📅 Agendamentos"): st.session_state['page'] = 'agenda'
-        if st.button("🔍 Buscar / Editar Cliente"): st.session_state['page'] = 'busca'
-        if st.button("💰 Financeiro"): st.session_state['page'] = 'financeiro'
+        if st.button("📅 AGENDAMENTOS"): st.session_state['page'] = 'agenda'
+        if st.button("🔍 BUSCAR / EDITAR"): st.session_state['page'] = 'busca'
+        if st.button("💰 FINANCEIRO"): st.session_state['page'] = 'financeiro'
     
     with c2:
-        if st.button("➕ Novo Cadastro"): st.session_state['page'] = 'cadastro'
+        if st.button("➕ NOVO CADASTRO"): st.session_state['page'] = 'cadastro'
         
         if st.session_state['usuario'].get('perfil') == 'admin':
-            if st.button("👥 Gestão de Usuários"): st.session_state['page'] = 'usuarios'
+            if st.button("👥 USUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            pass
+            st.write("") # Espaçador
         
-        if st.button("🔒 Alterar Minha Senha"): st.session_state['page'] = 'senha'
+        if st.button("🔒 SENHA"): st.session_state['page'] = 'senha'
 
     st.divider()
     
-    if st.button("Sair do Sistema", type="primary"): 
-        st.session_state.clear()
-        st.rerun()
+    # Centralizar botão de sair
+    col_sair1, col_sair2, col_sair3 = st.columns([1,1,1])
+    with col_sair2:
+        if st.button("Sair do Sistema", type="primary", use_container_width=True): 
+            st.session_state.clear()
+            st.rerun()
 
 def tela_voltar():
-    if st.button("⬅️ Voltar ao Menu"):
+    mostrar_logo_sidebar()
+    if st.sidebar.button("⬅️ VOLTAR AO MENU"):
         st.session_state['page'] = 'menu'
         st.rerun()
 
@@ -138,147 +207,145 @@ def tela_cadastro():
     tela_voltar()
     st.title("➕ Novo Cadastro")
     
-    with st.form("form_completo"):
-        st.subheader("1. Dados do Cliente")
-        c1, c2 = st.columns(2)
-        nome = c1.text_input("Nome Completo")
-        cpf = c2.text_input("CPF")
-        data_nasc = c1.date_input("Data Nascimento", value=None, format="DD/MM/YYYY")
-        email = c2.text_input("Email")
-        senha_inss = c1.text_input("Senha Meu INSS")
-        colaborador = c2.text_input("Colaborador (Indicação)")
-        
-        st.divider()
-        st.subheader("2. Dados do Processo")
-        c3, c4, c5 = st.columns(3)
-        servico = c3.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria", "Salário Maternidade", "Pensão", "Outro"])
-        num_req = c4.text_input("Nº Requerimento (NB)")
-        esfera = c5.selectbox("Esfera", ["Administrativo", "Judicial"])
-        
-        situacao = st.selectbox("Situação Atual", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
-        
-        st.divider()
-        st.subheader("3. Agendamentos Iniciais (Opcional)")
-        
-        col_p, col_s = st.columns(2)
-        
-        # PERÍCIA
-        with col_p:
-            st.markdown("### 🩺 Perícia / Audiência")
-            tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
-            local_pericia = st.text_input("Local da Perícia", value="Agência INSS")
-            data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
-            hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
-            check_pericia = st.checkbox("Já compareceu nesta Perícia?")
+    with st.container(border=True):
+        with st.form("form_completo"):
+            st.markdown("#### 1. Dados do Cliente")
+            c1, c2 = st.columns(2)
+            nome = c1.text_input("Nome Completo")
+            cpf = c2.text_input("CPF")
+            data_nasc = c1.date_input("Data Nascimento", value=None, format="DD/MM/YYYY")
+            email = c2.text_input("Email")
+            senha_inss = c1.text_input("Senha Meu INSS")
+            colaborador = c2.text_input("Colaborador (Indicação)")
             
-        # AVALIAÇÃO SOCIAL
-        with col_s:
-            st.markdown("### 📋 Avaliação Social")
-            tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
-            local_social = st.text_input("Local da Avaliação", value="Agência INSS")
-            data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
-            hora_social = st.time_input("Hora Avaliação", value=time(8,0))
-            check_social = st.checkbox("Já compareceu na Avaliação?")
+            st.divider()
+            st.markdown("#### 2. Dados do Processo")
+            c3, c4, c5 = st.columns(3)
+            servico = c3.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria", "Salário Maternidade", "Pensão", "Outro"])
+            num_req = c4.text_input("Nº Requerimento (NB)")
+            esfera = c5.selectbox("Esfera", ["Administrativo", "Judicial"])
+            
+            situacao = st.selectbox("Situação Atual", ["Em Análise", "Em Exigência", "Concedido", "Indeferido", "Aguardando Perícia"])
+            
+            st.divider()
+            st.markdown("#### 3. Agendamentos Iniciais (Opcional)")
+            
+            col_p, col_s = st.columns(2)
+            
+            with col_p:
+                st.info("🩺 **Perícia / Audiência**")
+                tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
+                local_pericia = st.text_input("Local da Perícia", value="Agência INSS")
+                data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
+                hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
+                check_pericia = st.checkbox("Já compareceu nesta Perícia?")
+                
+            with col_s:
+                st.info("📋 **Avaliação Social**")
+                tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
+                local_social = st.text_input("Local da Avaliação", value="Agência INSS")
+                data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
+                hora_social = st.time_input("Hora Avaliação", value=time(8,0))
+                check_social = st.checkbox("Já compareceu na Avaliação?")
 
-        if st.form_submit_button("💾 Salvar Cadastro Completo"):
-            if not nome:
-                st.error("Nome é obrigatório.")
-            else:
-                try:
-                    d_nasc = str(data_nasc) if data_nasc else None
-                    res_cli = supabase.table('clientes').insert({
-                        "nome": nome, "cpf": cpf, "email": email, 
-                        "senha_meu_inss": senha_inss, "colaborador": colaborador,
-                        "data_nascimento": d_nasc
-                    }).execute()
-                    cli_id = res_cli.data[0]['id']
-                    
-                    res_proc = supabase.table('processos').insert({
-                        "cliente_id": cli_id, "tipo_beneficio": servico,
-                        "numero_requerimento": num_req, "status_processo": situacao,
-                        "esfera": esfera
-                    }).execute()
-                    proc_id = res_proc.data[0]['id']
-
-                    if data_pericia:
-                        dt_full = datetime.combine(data_pericia, hora_pericia).isoformat()
-                        status_p = "Compareceu" if check_pericia else "Pendente"
-                        supabase.table('agendamentos').insert({
-                            "processo_id": proc_id, "tipo_evento": tipo_pericia,
-                            "data_hora": dt_full, "local_cidade": local_pericia,
-                            "status_comparecimento": status_p
+            st.write("")
+            if st.form_submit_button("💾 Salvar Cadastro Completo", type="primary"):
+                if not nome:
+                    st.error("Nome é obrigatório.")
+                else:
+                    try:
+                        d_nasc = str(data_nasc) if data_nasc else None
+                        res_cli = supabase.table('clientes').insert({
+                            "nome": nome, "cpf": cpf, "email": email, 
+                            "senha_meu_inss": senha_inss, "colaborador": colaborador,
+                            "data_nascimento": d_nasc
                         }).execute()
+                        cli_id = res_cli.data[0]['id']
                         
-                    if data_social:
-                        dt_full_s = datetime.combine(data_social, hora_social).isoformat()
-                        status_s = "Compareceu" if check_social else "Pendente"
-                        supabase.table('agendamentos').insert({
-                            "processo_id": proc_id, "tipo_evento": tipo_social,
-                            "data_hora": dt_full_s, "local_cidade": local_social,
-                            "status_comparecimento": status_s
+                        res_proc = supabase.table('processos').insert({
+                            "cliente_id": cli_id, "tipo_beneficio": servico,
+                            "numero_requerimento": num_req, "status_processo": situacao,
+                            "esfera": esfera
                         }).execute()
+                        proc_id = res_proc.data[0]['id']
 
-                    st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
-                except Exception as e:
-                    st.error(f"Erro ao salvar: {e}")
+                        if data_pericia:
+                            dt_full = datetime.combine(data_pericia, hora_pericia).isoformat()
+                            status_p = "Compareceu" if check_pericia else "Pendente"
+                            supabase.table('agendamentos').insert({
+                                "processo_id": proc_id, "tipo_evento": tipo_pericia,
+                                "data_hora": dt_full, "local_cidade": local_pericia,
+                                "status_comparecimento": status_p
+                            }).execute()
+                            
+                        if data_social:
+                            dt_full_s = datetime.combine(data_social, hora_social).isoformat()
+                            status_s = "Compareceu" if check_social else "Pendente"
+                            supabase.table('agendamentos').insert({
+                                "processo_id": proc_id, "tipo_evento": tipo_social,
+                                "data_hora": dt_full_s, "local_cidade": local_social,
+                                "status_comparecimento": status_s
+                            }).execute()
+
+                        st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
+                    except Exception as e:
+                        st.error(f"Erro ao salvar: {e}")
 
 def tela_busca_edicao():
     tela_voltar()
     st.title("🔍 Buscar e Editar")
     
-    termo = st.text_input("Pesquisar Cliente (Nome ou CPF)")
+    termo = st.text_input("Pesquisar Cliente (Nome ou CPF)", placeholder="Digite para buscar...")
     
     if termo:
         res = supabase.table('clientes').select("*").ilike('nome', f"%{termo}%").order('nome').execute()
         
         for cli in res.data:
-            # Verifica status para cor da caixa
             status_geral = cli.get('status_geral', 'Ativo')
-            cor_status = "red" if status_geral == 'Arquivado' else "blue"
+            cor_status = "red" if status_geral == 'Arquivado' else "green"
             colab_txt = f" | Indicado por: {cli['colaborador']}" if cli.get('colaborador') else ""
             
             with st.expander(f":{cor_status}[{status_geral}] - 👤 {cli['nome']} {colab_txt}"):
                 
-                # --- AQUI ESTÁ O BOTÃO DE ARQUIVAR QUE VOLTOU ---
+                # Botão de Arquivar
                 if status_geral == 'Ativo':
                     c_arq1, c_arq2 = st.columns([3, 1])
-                    c_arq2.write("") # Espaçamento
-                    with c_arq2.popover("🗑️ Arquivar Cliente"):
-                        motivo = st.text_input("Motivo do arquivamento", key=f"mot_{cli['id']}")
+                    c_arq2.write("") 
+                    with c_arq2.popover("🗑️ Arquivar"):
+                        motivo = st.text_input("Motivo", key=f"mot_{cli['id']}")
                         if st.button("Confirmar", key=f"arq_{cli['id']}"):
                             supabase.table('clientes').update({'status_geral': 'Arquivado', 'motivo_arquivamento': motivo}).eq('id', cli['id']).execute()
-                            st.success("Cliente arquivado!")
+                            st.success("Arquivado!")
                             st.rerun()
                 else:
-                    st.warning(f"Cliente Arquivado. Motivo: {cli.get('motivo_arquivamento', '-')}")
-                    if st.button("Reativar Cliente", key=f"react_{cli['id']}"):
+                    st.warning(f"Motivo: {cli.get('motivo_arquivamento', '-')}")
+                    if st.button("Reativar", key=f"react_{cli['id']}"):
                          supabase.table('clientes').update({'status_geral': 'Ativo', 'motivo_arquivamento': None}).eq('id', cli['id']).execute()
                          st.rerun()
-                # -----------------------------------------------
 
                 with st.form(key=f"edit_cli_{cli['id']}"):
-                    st.write("**Dados Pessoais**")
+                    st.markdown("**Dados Pessoais**")
                     c1, c2 = st.columns(2)
                     n_nome = c1.text_input("Nome", value=cli['nome'])
                     n_cpf = c2.text_input("CPF", value=cli['cpf'])
                     n_email = c1.text_input("Email", value=cli['email'])
                     n_senha = c2.text_input("Senha INSS", value=cli['senha_meu_inss'])
                     
-                    if st.form_submit_button("Atualizar Dados Pessoais"):
+                    if st.form_submit_button("Atualizar Dados"):
                         supabase.table('clientes').update({
                             "nome": n_nome, "cpf": n_cpf, "email": n_email, "senha_meu_inss": n_senha
                         }).eq('id', cli['id']).execute()
-                        st.success("Cliente atualizado!")
+                        st.success("Atualizado!")
                         st.rerun()
                 
                 st.divider()
-                st.write("**Processos**")
+                st.markdown("**Processos**")
                 procs = supabase.table('processos').select("*").eq('cliente_id', cli['id']).execute().data
                 
                 for p in procs:
                     with st.container(border=True):
                         c_p1, c_p2, c_p3, c_p4 = st.columns([2, 1.5, 1.5, 1])
-                        c_p1.write(f"**{p['tipo_beneficio']}**")
+                        c_p1.write(f"📂 **{p['tipo_beneficio']}**")
                         
                         esfera_atual = p.get('esfera', 'Administrativo')
                         if not esfera_atual: esfera_atual = 'Administrativo'
@@ -288,16 +355,15 @@ def tela_busca_edicao():
                         idx_status = lista_status.index(p['status_processo']) if p['status_processo'] in lista_status else 0
                         novo_status = c_p3.selectbox("Status", lista_status, key=f"st_{p['id']}", index=idx_status)
                         
-                        if c_p4.button("💾", key=f"bt_{p['id']}", help="Salvar Alterações"):
+                        if c_p4.button("💾", key=f"bt_{p['id']}"):
                             supabase.table('processos').update({
                                 "status_processo": novo_status,
                                 "esfera": nova_esfera
                             }).eq('id', p['id']).execute()
-                            st.toast("Atualizado com sucesso!")
+                            st.toast("Salvo!")
                             st.rerun()
 
                 with st.popover("➕ Adicionar Processo"):
-                    st.write("Novo Processo para este cliente")
                     with st.form(key=f"form_add_p_{cli['id']}"):
                         serv_novo = st.selectbox("Serviço", ["BPC/LOAS", "Auxílio Doença", "Aposentadoria"], key=f"new_serv_{cli['id']}")
                         esfera_novo = st.selectbox("Esfera", ["Administrativo", "Judicial"], key=f"new_esf_{cli['id']}")
@@ -315,9 +381,10 @@ def tela_agenda():
     tela_voltar()
     st.title("📅 Agenda")
     
-    c1, c2 = st.columns(2)
-    mes = c1.selectbox("Mês", range(1,13), index=datetime.now().month-1)
-    ano = c2.number_input("Ano", value=datetime.now().year)
+    with st.container(border=True):
+        c1, c2 = st.columns(2)
+        mes = c1.selectbox("Mês", range(1,13), index=datetime.now().month-1)
+        ano = c2.number_input("Ano", value=datetime.now().year)
     
     res = supabase.table('agendamentos').select("*, processos(id, clientes(nome))").order('data_hora').execute()
     
@@ -335,23 +402,24 @@ def tela_agenda():
         df = pd.DataFrame(dados)
         st.dataframe(df[['Data', 'Cliente', 'tipo_evento', 'Status', 'local_cidade']], use_container_width=True)
     else:
-        st.info("Nada agendado.")
+        st.info("Nada agendado para este período.")
 
 def tela_financeiro():
     tela_voltar()
     st.title("💰 Financeiro")
     
-    abas = st.tabs(["Caixa Diário", "Gestão de Contratos", "Novo Contrato"])
+    abas = st.tabs(["Fluxo de Caixa", "Contratos", "Novo Contrato"])
     
     with abas[0]:
         st.subheader("Movimento do Dia")
-        data_f = st.date_input("Data", value=date.today(), format="DD/MM/YYYY")
+        data_f = st.date_input("Filtrar Data", value=date.today(), format="DD/MM/YYYY")
         
-        with st.expander("➕ Lançamento Avulso"):
-            l_tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
-            l_val = st.number_input("Valor", step=10.0)
+        with st.expander("➕ Lançamento Avulso (Entrada/Saída)"):
+            c1, c2 = st.columns(2)
+            l_tipo = c1.selectbox("Tipo", ["Entrada", "Saída"])
+            l_val = c2.number_input("Valor R$", step=10.0)
             l_desc = st.text_input("Descrição")
-            if st.button("Lançar"):
+            if st.button("Lançar Movimentação", type="primary"):
                 supabase.table('caixa').insert({
                     "tipo": l_tipo, "valor": l_val, "descricao": l_desc,
                     "usuario_responsavel": st.session_state['usuario']['usuario'],
@@ -365,6 +433,16 @@ def tela_financeiro():
         if filtrados:
             df = pd.DataFrame(filtrados)
             df['Data'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%d/%m/%Y')
+            
+            # Totais
+            tot_ent = sum(x['valor'] for x in filtrados if x['tipo']=='Entrada')
+            tot_sai = sum(x['valor'] for x in filtrados if x['tipo']=='Saída')
+            
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Entradas", f"R$ {tot_ent:.2f}")
+            m2.metric("Saídas", f"R$ {tot_sai:.2f}")
+            m3.metric("Saldo", f"R$ {tot_ent-tot_sai:.2f}")
+
             st.dataframe(df[['Data', 'tipo', 'descricao', 'valor', 'usuario_responsavel']], use_container_width=True)
             
             if st.button("📄 Baixar PDF do Dia"):
@@ -389,10 +467,11 @@ def tela_financeiro():
                 cor = "red" if atraso > 0 else "blue"
                 
                 with st.expander(f":{cor}[{venc}] | {cli_nome} | R$ {p['valor_parcela']:.2f}"):
-                    st.write(f"Parcela {p['numero_parcela']}")
-                    forma = st.selectbox("Forma", ["Dinheiro", "Pix"], key=f"f_{p['id']}")
+                    c1, c2 = st.columns([2,1])
+                    c1.write(f"Parcela {p['numero_parcela']}")
+                    forma = c1.selectbox("Forma", ["Dinheiro", "Pix"], key=f"f_{p['id']}")
                     
-                    if st.button("✅ Receber (Baixar)", key=f"rec_{p['id']}"):
+                    if c2.button("✅ Baixar", key=f"rec_{p['id']}"):
                         supabase.table('parcelas').update({
                             "data_pagamento": date.today().isoformat(),
                             "valor_pago": p['valor_parcela'],
@@ -438,7 +517,7 @@ def tela_financeiro():
                 if saldo > 0:
                     st.info(f"Serão geradas {qtd_parcelas} parcelas de R$ {saldo/qtd_parcelas:.2f}")
                 
-                if st.button("Gerar Contrato"):
+                if st.button("Gerar Contrato", type="primary"):
                     if valor_total <= 0:
                         st.error("Valor inválido.")
                     else:
@@ -474,20 +553,20 @@ def tela_financeiro():
 
 def tela_usuarios():
     tela_voltar()
-    st.title("👥 Gestão de Usuários (Admin)")
+    st.title("👥 Gestão de Usuários")
     
     if st.session_state['usuario'].get('perfil') != 'admin':
         st.error("Acesso negado.")
         return
 
-    st.subheader("Cadastrar Novo Funcionário")
     with st.form("new_user"):
+        st.subheader("Novo Funcionário")
         u_nome = st.text_input("Nome")
         u_login = st.text_input("Login/Usuário")
         u_senha = st.text_input("Senha Inicial")
         u_perfil = st.selectbox("Perfil", ["comum", "admin"])
         
-        if st.form_submit_button("Criar Usuário"):
+        if st.form_submit_button("Criar Usuário", type="primary"):
             try:
                 supabase.table('usuarios').insert({
                     "nome": u_nome, "usuario": u_login, "senha": u_senha, "perfil": u_perfil
@@ -501,7 +580,7 @@ def tela_senha():
     st.title("🔒 Alterar Senha")
     
     senha_nova = st.text_input("Nova Senha", type="password")
-    if st.button("Confirmar Alteração"):
+    if st.button("Confirmar Alteração", type="primary"):
         meu_id = st.session_state['usuario']['id']
         supabase.table('usuarios').update({"senha": senha_nova}).eq('id', meu_id).execute()
         st.success("Senha alterada! Faça login novamente.")
@@ -511,13 +590,19 @@ def tela_senha():
 # --- CONTROLE DE NAVEGAÇÃO ---
 def main():
     if 'usuario' not in st.session_state:
-        # TELA DE LOGIN
-        c1, c2, c3 = st.columns([1,1,1])
+        # TELA DE LOGIN ESTILIZADA
+        aplicar_estilo_premium()
+        
+        # Centralizar Login verticalmente e horizontalmente
+        st.write("")
+        st.write("")
+        c1, c2, c3 = st.columns([1,2,1])
         with c2:
-            st.title("⚖️ Login")
+            st.image("LOGO lUNA ALENCAR.png", use_container_width=True) # Logo na tela de login
+            st.markdown("<h3 style='text-align: center;'>Acesso Restrito</h3>", unsafe_allow_html=True)
             u = st.text_input("Usuário")
             s = st.text_input("Senha", type="password")
-            if st.button("Entrar", use_container_width=True):
+            if st.button("ENTRAR", use_container_width=True, type="primary"):
                 res = supabase.table('usuarios').select("*").eq('usuario', u).eq('senha', s).execute()
                 if res.data:
                     st.session_state['usuario'] = res.data[0]
