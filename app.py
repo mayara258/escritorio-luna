@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (LUXO: DOURADO, PRETO E CAFÉ) ---
+# --- ESTILO CSS (CORREÇÃO DE ALINHAMENTO E CONTRASTE) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,24 +33,23 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (Tamanho Igual e Dourados) --- */
+        /* --- BOTÕES DO MENU PRINCIPAL (QUADRADOS DOURADOS) --- */
         div[data-testid="column"] .stButton button {
-            height: 180px !important;     /* Altura Fixa para todos */
-            min-height: 180px !important; /* Garante que não diminua */
-            width: 100% !important;       /* Ocupa toda a largura da coluna */
+            height: 180px !important;     /* Altura Fixa */
+            width: 100% !important;       
             
-            background-color: #C5A065 !important; /* FUNDO DOURADO */
-            color: #1E1B18 !important;            /* LETRA PRETA/ESCURA */
+            background-color: #C5A065 !important; /* FUNDO DOURADO SÓLIDO */
+            color: #1E1B18 !important;            /* LETRA ESCURA (PRETO/CAFÉ) */
             
-            font-size: 20px !important;
+            font-size: 18px !important;
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 6px !important;
+            border-radius: 4px !important; /* Cantos levemente arredondados */
             box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
             transition: all 0.3s ease !important;
             text-transform: uppercase;
             letter-spacing: 1px;
-            white-space: normal !important; /* Permite quebrar linha sem deformar */
+            white-space: normal !important;
             margin-bottom: 20px !important;
         }
         
@@ -90,12 +89,10 @@ def aplicar_estilo_visual():
             border-radius: 4px !important;
         }
         
-        /* --- COR DOS LABELS (USUÁRIO/SENHA) --- */
-        /* Isso garante que 'Usuário' e 'Senha' fiquem Brancos */
-        .stTextInput label, .stSelectbox label, .stDateInput label {
+        /* --- COR DOS LABELS (ESSENCIAL PARA O LOGIN) --- */
+        /* Garante que 'Usuário', 'Senha' e outros títulos de campos sejam BRANCOS */
+        .stTextInput label, .stSelectbox label, .stDateInput label, div[data-testid="stMarkdownContainer"] p {
             color: #FFFFFF !important;
-            font-weight: 500 !important;
-            font-size: 16px !important;
         }
         
         /* --- TÍTULOS --- */
@@ -113,6 +110,7 @@ def aplicar_estilo_visual():
 
 # --- CABEÇALHO ---
 def mostrar_cabecalho():
+    # Centralização da Logo usando proporções que centralizam bem
     c1, c2, c3 = st.columns([1, 1, 1])
     with c2:
         try:
@@ -186,8 +184,10 @@ def tela_menu_principal():
     st.write("") 
     st.write("") 
     
-    # --- LAYOUT DE BOTÕES (CENTRALIZADO) ---
-    col_esq, col_btn1, col_btn2, col_dir = st.columns([1, 2, 2, 1])
+    # --- LAYOUT CORRIGIDO PARA BOTÕES QUADRADOS ---
+    # Aumentei as margens laterais (3) para 'espremer' os botões no centro
+    # Isso impede que eles fiquem retangulares em telas largas
+    col_esq, col_btn1, col_btn2, col_dir = st.columns([3, 2, 2, 3])
     
     with col_btn1:
         if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
@@ -200,7 +200,7 @@ def tela_menu_principal():
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            # Botão invisível para manter grid perfeito
+            # Espaço vazio do mesmo tamanho do botão para manter alinhamento
             st.markdown("<div style='height: 180px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
             
         if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
@@ -208,6 +208,7 @@ def tela_menu_principal():
     st.write("")
     st.write("")
     
+    # Botão Sair centralizado
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
         if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
@@ -306,7 +307,7 @@ def tela_cadastro():
                                 "status_comparecimento": status_s
                             }).execute()
 
-                        st.success(f"Cadastro realizado! Cliente: {nome} ({esfera})")
+                        st.success(f"Cadastro realizado! Cliente: {nome}")
                     except Exception as e:
                         st.error(f"Erro ao salvar: {e}")
 
