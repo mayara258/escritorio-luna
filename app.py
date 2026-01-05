@@ -163,18 +163,21 @@ def tela_cadastro():
         
         col_p, col_s = st.columns(2)
         
+        # COLUNA DA ESQUERDA - PERÍCIA
         with col_p:
             st.markdown("### 🩺 Perícia / Audiência")
             tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
-            local_pericia = st.text_input("Local da Perícia", value="Agência INSS") # CAMPO NOVO
+            local_pericia = st.text_input("Local da Perícia", value="Agência INSS")
             data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
             hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
             check_pericia = st.checkbox("Já compareceu nesta Perícia?")
             
+        # COLUNA DA DIREITA - AVALIAÇÃO SOCIAL (AGORA ALINHADA)
         with col_s:
             st.markdown("### 📋 Avaliação Social")
-            st.write("(Assistente Social)")
-            local_social = st.text_input("Local da Avaliação", value="Agência INSS") # CAMPO NOVO
+            # Adicionado Seletor de Tipo para alinhar com a coluna da esquerda
+            tipo_social = st.selectbox("Tipo da Avaliação", ["Avaliação Social INSS", "Avaliação Social Judicial"])
+            local_social = st.text_input("Local da Avaliação", value="Agência INSS")
             data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
             hora_social = st.time_input("Hora Avaliação", value=time(8,0))
             check_social = st.checkbox("Já compareceu na Avaliação?")
@@ -212,7 +215,7 @@ def tela_cadastro():
                         dt_full_s = datetime.combine(data_social, hora_social).isoformat()
                         status_s = "Compareceu" if check_social else "Pendente"
                         supabase.table('agendamentos').insert({
-                            "processo_id": proc_id, "tipo_evento": "Avaliação Social",
+                            "processo_id": proc_id, "tipo_evento": tipo_social, # Salva o tipo escolhido (INSS ou Judicial)
                             "data_hora": dt_full_s, "local_cidade": local_social,
                             "status_comparecimento": status_s
                         }).execute()
