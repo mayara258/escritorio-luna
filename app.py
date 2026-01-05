@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (GEOMETRIA FIXA E CENTRALIZADA) ---
+# --- ESTILO CSS (BOTÕES GIGANTES E SAIR DISCRETO) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,7 +33,7 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- CORREÇÃO DEFINITIVA DOS BOTÕES (QUADRADOS FIXOS) --- */
+        /* --- CORREÇÃO DEFINITIVA DOS BOTÕES (QUADRADOS GIGANTES FIXOS) --- */
         
         /* 1. Centralizar o botão dentro da coluna */
         div[data-testid="column"] .stButton {
@@ -43,19 +43,19 @@ def aplicar_estilo_visual():
             width: 100%;
         }
 
-        /* 2. Definir tamanho fixo e estilo do botão */
+        /* 2. Definir tamanho fixo GIGANTE e estilo do botão */
         div[data-testid="column"] .stButton button {
-            width: 220px !important;      /* LARGURA TRAVADA */
-            height: 220px !important;     /* ALTURA TRAVADA (Igual a largura) */
+            width: 300px !important;      /* LARGURA GIGANTE TRAVADA */
+            height: 300px !important;     /* ALTURA GIGANTE TRAVADA (Igual a largura) */
             
             background-color: #C5A065 !important; /* DOURADO */
             color: #1E1B18 !important;            /* PRETO */
             
-            font-size: 18px !important;
+            font-size: 22px !important; /* Fonte maior para acompanhar o botão */
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+            border-radius: 16px !important; /* Cantos mais arredondados */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6) !important;
             
             /* Centralizar o texto dentro do quadrado */
             display: flex !important;
@@ -66,30 +66,35 @@ def aplicar_estilo_visual():
             
             transition: all 0.3s ease !important;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             white-space: pre-wrap !important; /* Permite quebra de linha */
             margin: 0 auto !important; /* Margem automática para garantir centro */
         }
         
-        /* Efeito Hover */
+        /* Efeito Hover (Passar o mouse) */
         div[data-testid="column"] .stButton button:hover {
             background-color: #D4AF37 !important; 
-            transform: scale(1.05) !important;
-            box-shadow: 0 10px 30px rgba(197, 160, 101, 0.4) !important;
+            transform: scale(1.03) !important; /* Cresce um pouco menos pois já é grande */
+            box-shadow: 0 12px 35px rgba(197, 160, 101, 0.5) !important;
             color: #000000 !important;
             z-index: 999;
         }
 
-        /* --- BOTÕES DE AÇÃO (Sair, Salvar - Tamanho Normal) --- */
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar - MENORES E CENTRALIZADOS) --- */
         button[kind="primary"] {
             background-color: #C5A065 !important;
             color: #1E1B18 !important;
             border: none !important;
             font-weight: bold !important;
             text-transform: uppercase;
-            width: 100% !important; /* Botão de sair ocupa a largura total do container dele */
-            height: auto !important;
-            min-height: 50px !important;
+            
+            /* Tamanho fixo menor para o botão de Sair/Salvar */
+            width: 200px !important; 
+            height: 50px !important;
+            
+            /* Centralizar o botão */
+            margin: 0 auto !important;
+            display: block !important;
         }
         button[kind="primary"]:hover {
             background-color: #E6CFA0 !important;
@@ -99,6 +104,7 @@ def aplicar_estilo_visual():
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
+            height: 50px !important;
         }
 
         /* --- INPUTS E TEXTO (Fundo Escuro) --- */
@@ -205,7 +211,7 @@ def tela_menu_principal():
     st.write("") 
     
     # --- LAYOUT CENTRALIZADO ---
-    # Colunas de espaçamento e colunas de conteúdo
+    # Colunas de espaçamento (1) e colunas de conteúdo (2)
     # [1, 2, 2, 1] cria um respiro nas laterais e foca no centro
     c_esq, c_col1, c_col2, c_dir = st.columns([1, 2, 2, 1])
     
@@ -222,7 +228,7 @@ def tela_menu_principal():
             st.rerun()
 
     # --- LINHA 2 ---
-    st.write("") # Espaço vertical para não colar os botões
+    st.write("") # Espaço vertical
     
     c_esq2, c_col3, c_col4, c_dir2 = st.columns([1, 2, 2, 1])
     
@@ -238,8 +244,8 @@ def tela_menu_principal():
                 st.session_state['page'] = 'usuarios'
                 st.rerun()
         else:
-            # Placeholder vazio para manter o grid alinhado
-            st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
+            # Placeholder vazio para manter o grid alinhado (Altura 300px agora)
+            st.markdown("<div style='height: 300px;'></div>", unsafe_allow_html=True)
 
     # --- LINHA 3 ---
     st.write("")
@@ -263,7 +269,8 @@ def tela_menu_principal():
     # Botão Sair centralizado
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
-        if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
+        # O CSS agora cuida do tamanho menor e centralização deste botão
+        if st.button("SAIR DO SISTEMA", type="primary"): 
             st.session_state.clear()
             st.rerun()
 
@@ -321,7 +328,7 @@ def tela_cadastro():
                 check_social = st.checkbox("Já compareceu na Avaliação?")
 
             st.write("")
-            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary", use_container_width=True):
+            if st.form_submit_button("💾 SALVAR CADASTRO", type="primary"):
                 if not nome:
                     st.error("Nome é obrigatório.")
                 else:
