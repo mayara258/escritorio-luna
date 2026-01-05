@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (ASPECT RATIO 1:1 - QUADRADOS PERFEITOS) ---
+# --- ESTILO CSS (GEOMETRIA FIXA E CENTRALIZADA) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,50 +33,63 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (TÉCNICA ASPECT-RATIO) --- */
+        /* --- CORREÇÃO DOS BOTÕES DO MENU (QUADRADOS FIXOS) --- */
+        
+        /* 1. Centralizar o botão dentro da coluna */
+        div[data-testid="column"] .stButton {
+            display: flex;
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 2. Definir tamanho fixo e estilo do botão */
         div[data-testid="column"] .stButton button {
-            width: 100% !important;        /* Ocupa toda a largura da coluna */
-            aspect-ratio: 1 / 1 !important; /* FORÇA SER QUADRADO (Altura = Largura) */
-            height: auto !important;       /* Deixa a altura automática baseada na largura */
+            width: 200px !important;      /* LARGURA TRAVADA */
+            height: 200px !important;     /* ALTURA TRAVADA (Igual a largura) */
             
             background-color: #C5A065 !important; /* DOURADO */
-            color: #1E1B18 !important;            /* PRETO/CAFÉ */
+            color: #1E1B18 !important;            /* PRETO */
             
             font-size: 18px !important;
             font-weight: 800 !important;
             border: none !important;
             border-radius: 8px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
             
-            /* Centralização do Texto */
+            /* Centralizar o texto dentro do quadrado */
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
+            text-align: center !important;
             
             transition: all 0.3s ease !important;
             text-transform: uppercase;
             letter-spacing: 1px;
             white-space: pre-wrap !important; /* Permite quebra de linha */
+            margin: 0 auto !important; /* Margem automática para garantir centro */
         }
         
+        /* Efeito Hover */
         div[data-testid="column"] .stButton button:hover {
             background-color: #D4AF37 !important; 
-            transform: scale(1.03) !important;
+            transform: scale(1.05) !important;
             box-shadow: 0 10px 30px rgba(197, 160, 101, 0.4) !important;
             color: #000000 !important;
             z-index: 999;
         }
 
-        /* --- BOTÕES DE AÇÃO (Sair, Salvar) --- */
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar - Tamanho Normal) --- */
         button[kind="primary"] {
             background-color: #C5A065 !important;
             color: #1E1B18 !important;
             border: none !important;
             font-weight: bold !important;
             text-transform: uppercase;
-            height: 50px !important; /* Altura normal para botões de ação */
-            aspect-ratio: auto !important; /* Desliga o quadrado forçado */
+            width: 100% !important; /* Botão de sair ocupa a largura total do container dele */
+            height: auto !important;
+            min-height: 50px !important;
         }
         button[kind="primary"]:hover {
             background-color: #E6CFA0 !important;
@@ -86,31 +99,29 @@ def aplicar_estilo_visual():
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
-            height: 50px !important;
-            aspect-ratio: auto !important;
         }
 
-        /* --- INPUTS E LABELS --- */
+        /* --- INPUTS E TEXTO (Fundo Escuro) --- */
         .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
             background-color: #3A302C !important; 
             color: #FFFFFF !important;
             border: 1px solid #5C4B3C !important;
-            border-radius: 6px !important;
+            border-radius: 4px !important;
         }
         
-        /* Cor Branca para Títulos dos Campos (Login) */
+        /* --- LABELS BRANCOS (Login legível) --- */
         .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label {
             color: #FFFFFF !important;
             font-size: 15px !important;
             font-weight: 500 !important;
         }
         
-        /* Títulos Dourados */
+        /* --- TÍTULOS --- */
         h1, h2, h3 {
             color: #C5A065 !important;
         }
         
-        /* Cards */
+        /* --- CARDS --- */
         [data-testid="stExpander"] {
             background-color: #3A302C !important;
             border: 1px solid #5C4B3C !important;
@@ -193,40 +204,63 @@ def tela_menu_principal():
     st.write("") 
     st.write("") 
     
-    # --- LAYOUT DE GRADE ALINHADA ---
-    # Usamos 3 colunas: [Espaço, Conteúdo, Espaço]
-    # O 'Conteúdo' terá largura fixa proporcional (3 partes)
-    # Isso centraliza tudo na tela.
-    c_esq, c_centro, c_dir = st.columns([1, 2, 1])
+    # --- LAYOUT CENTRALIZADO ---
+    # Colunas de espaçamento e colunas de conteúdo
+    # [1, 2, 2, 1] cria um respiro nas laterais e foca no centro
+    c_esq, c_col1, c_col2, c_dir = st.columns([1, 2, 2, 1])
     
-    with c_centro:
-        # Dentro do centro, criamos 2 colunas para os botões
-        # Gap large garante espaçamento bonito
-        col1, col2 = st.columns(2, gap="large")
-        
-        with col1:
-            if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
-            if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
-            if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
+    # Botão 1: AGENDAMENTOS
+    with c_col1:
+        if st.button("📅\n\nAGENDAMENTOS", key="btn_agenda"): 
+            st.session_state['page'] = 'agenda'
+            st.rerun()
             
-        with col2:
-            if st.button("➕\n\nNOVO CADASTRO"): st.session_state['page'] = 'cadastro'
+    # Botão 2: NOVO CADASTRO
+    with c_col2:
+        if st.button("➕\n\nNOVO CADASTRO", key="btn_cadastro"): 
+            st.session_state['page'] = 'cadastro'
+            st.rerun()
+
+    # --- LINHA 2 ---
+    st.write("") # Espaço vertical para não colar os botões
+    
+    c_esq2, c_col3, c_col4, c_dir2 = st.columns([1, 2, 2, 1])
+    
+    with c_col3:
+        if st.button("🔍\n\nBUSCAR / EDITAR", key="btn_busca"): 
+            st.session_state['page'] = 'busca'
+            st.rerun()
             
-            # Botão de Usuários (Admin) ou Vazio (Layout)
-            if st.session_state['usuario'].get('perfil') == 'admin':
-                if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
-            else:
-                # Criamos um "botão fantasma" transparente e não clicável para manter o quadrado
-                st.markdown("""
-                <div style="width:100%; aspect-ratio:1/1; margin-bottom:16px;"></div>
-                """, unsafe_allow_html=True)
-                
-            if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
+    with c_col4:
+        # Lógica para mostrar Usuários ou um espaço vazio
+        if st.session_state['usuario'].get('perfil') == 'admin':
+            if st.button("👥\n\nUSUÁRIOS", key="btn_users"): 
+                st.session_state['page'] = 'usuarios'
+                st.rerun()
+        else:
+            # Placeholder vazio para manter o grid alinhado
+            st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True)
+
+    # --- LINHA 3 ---
+    st.write("")
+    
+    c_esq3, c_col5, c_col6, c_dir3 = st.columns([1, 2, 2, 1])
+    
+    with c_col5:
+        if st.button("💰\n\nFINANCEIRO", key="btn_fin"): 
+            st.session_state['page'] = 'financeiro'
+            st.rerun()
+            
+    with c_col6:
+        if st.button("🔒\n\nMINHA SENHA", key="btn_senha"): 
+            st.session_state['page'] = 'senha'
+            st.rerun()
 
     st.write("")
     st.write("")
+    st.divider()
     
-    # Botão Sair
+    # Botão Sair centralizado
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
         if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
