@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (CORREÇÃO DE ALINHAMENTO E CONTRASTE) ---
+# --- ESTILO CSS (GEOMETRIA PERFEITA & LUXO) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,29 +33,36 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (QUADRADOS DOURADOS) --- */
+        /* --- BOTÕES DO MENU PRINCIPAL (Tamanho IDÊNTICO) --- */
         div[data-testid="column"] .stButton button {
-            height: 180px !important;     /* Altura Fixa */
-            width: 100% !important;       
+            height: 150px !important;     /* Altura travada para TODOS */
+            min-height: 150px !important; /* Garante que não encolha */
+            max-height: 150px !important; /* Garante que não estique */
+            width: 100% !important;       /* Largura preenche a coluna */
             
-            background-color: #C5A065 !important; /* FUNDO DOURADO SÓLIDO */
-            color: #1E1B18 !important;            /* LETRA ESCURA (PRETO/CAFÉ) */
+            background-color: #C5A065 !important; /* DOURADO */
+            color: #1E1B18 !important;            /* PRETO/CAFÉ */
             
             font-size: 18px !important;
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 4px !important; /* Cantos levemente arredondados */
+            border-radius: 6px !important;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+            
+            /* Centralizar texto perfeitamente */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            
             transition: all 0.3s ease !important;
             text-transform: uppercase;
             letter-spacing: 1px;
-            white-space: normal !important;
             margin-bottom: 20px !important;
         }
         
-        /* Efeito ao passar o mouse */
+        /* Efeito Hover */
         div[data-testid="column"] .stButton button:hover {
-            background-color: #D4AF37 !important; /* Dourado mais claro */
+            background-color: #D4AF37 !important;
             transform: scale(1.02) !important;
             box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3) !important;
             color: #000000 !important;
@@ -74,14 +81,14 @@ def aplicar_estilo_visual():
             border-color: #E6CFA0 !important;
         }
         
-        /* Botão Secundário (Voltar) */
+        /* Botão Voltar */
         button[kind="secondary"] {
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
         }
 
-        /* --- CAMPOS DE TEXTO E INPUTS --- */
+        /* --- CAMPOS DE TEXTO --- */
         .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
             background-color: #3A302C !important; 
             color: #FFFFFF !important;
@@ -89,18 +96,19 @@ def aplicar_estilo_visual():
             border-radius: 4px !important;
         }
         
-        /* --- COR DOS LABELS (ESSENCIAL PARA O LOGIN) --- */
-        /* Garante que 'Usuário', 'Senha' e outros títulos de campos sejam BRANCOS */
-        .stTextInput label, .stSelectbox label, .stDateInput label, div[data-testid="stMarkdownContainer"] p {
+        /* --- COR DOS TÍTULOS DOS CAMPOS (BRANCO PARA LEITURA) --- */
+        .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label {
             color: #FFFFFF !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
         }
         
-        /* --- TÍTULOS --- */
+        /* --- TÍTULOS GERAIS (Dourado) --- */
         h1, h2, h3 {
-            color: #C5A065 !important; /* Dourado */
+            color: #C5A065 !important;
         }
         
-        /* --- CARDS/EXPANDERS --- */
+        /* --- CARDS --- */
         [data-testid="stExpander"] {
             background-color: #3A302C !important;
             border: 1px solid #5C4B3C !important;
@@ -110,7 +118,6 @@ def aplicar_estilo_visual():
 
 # --- CABEÇALHO ---
 def mostrar_cabecalho():
-    # Centralização da Logo usando proporções que centralizam bem
     c1, c2, c3 = st.columns([1, 1, 1])
     with c2:
         try:
@@ -184,12 +191,12 @@ def tela_menu_principal():
     st.write("") 
     st.write("") 
     
-    # --- LAYOUT CORRIGIDO PARA BOTÕES QUADRADOS ---
-    # Aumentei as margens laterais (3) para 'espremer' os botões no centro
-    # Isso impede que eles fiquem retangulares em telas largas
-    col_esq, col_btn1, col_btn2, col_dir = st.columns([3, 2, 2, 3])
+    # --- LAYOUT GEOMÉTRICO (2 Colunas Centrais Iguais) ---
+    # Usando proporção [1, 2, 2, 1] para manter botões largos e alinhados
+    col_esq, col_btn1, col_btn2, col_dir = st.columns([1, 2, 2, 1])
     
     with col_btn1:
+        # Quebra de linha (\n\n) ajuda a centralizar visualmente se o texto for curto
         if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
         if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
         if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
@@ -200,15 +207,15 @@ def tela_menu_principal():
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            # Espaço vazio do mesmo tamanho do botão para manter alinhamento
-            st.markdown("<div style='height: 180px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+            # Elemento invisível com MESMA altura do botão para manter alinhamento
+            st.markdown("<div style='height: 150px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
             
         if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
 
     st.write("")
     st.write("")
     
-    # Botão Sair centralizado
+    # Botão Sair
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
         if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
