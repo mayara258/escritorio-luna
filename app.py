@@ -17,131 +17,114 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS BLINDADO (FORÇA BRUTA) ---
+# --- ESTILO CSS (GEOMETRIA QUADRADA TRAVADA) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
         
-        /* Reset de Fonte */
         html, body, [class*="css"] {
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* --- 1. FUNDO GERAL (Café Escuro) --- */
-        .stApp, .stApp > header {
-            background-color: #2E2522 !important; 
-        }
-        
-        /* Texto Genérico */
-        .stApp, p, span, div {
+        /* --- FUNDO GERAL --- */
+        .stApp {
+            background-color: #2E2522; 
             color: #E0E0E0;
         }
 
-        /* --- 2. BOTÕES DO MENU (Dourados e Quadrados) --- */
-        /* Seleciona TODOS os botões dentro das colunas */
-        div[data-testid="column"] .stButton > button {
-            background-color: #C5A065 !important; /* Dourado Sólido */
-            color: #1E1B18 !important;            /* Preto/Café Escuro */
+        /* --- BOTÕES DO MENU PRINCIPAL (QUADRADOS FIXOS) --- */
+        /* Força o container do botão a centralizar o botão */
+        div[data-testid="column"] .stButton {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Estilo do Botão em si */
+        div[data-testid="column"] .stButton button {
+            width: 220px !important;      /* LARGURA FIXA */
+            height: 220px !important;     /* ALTURA FIXA (Igual a largura = Quadrado) */
             
-            height: 160px !important;             /* Altura Fixa */
-            width: 100% !important;               /* Largura Total */
+            background-color: #C5A065 !important; /* DOURADO */
+            color: #1E1B18 !important;            /* PRETO/CAFÉ */
             
             font-size: 18px !important;
-            font-weight: 800 !important;          /* Negrito Extra */
-            border: 2px solid #C5A065 !important;
-            border-radius: 8px !important;
-            
-            /* Sombra para destacar do fundo */
+            font-weight: 800 !important;
+            border: none !important;
+            border-radius: 12px !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
             
-            /* Centralização do texto */
+            /* Centralização do Texto */
             display: flex !important;
+            flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
-            text-align: center !important;
             
-            transition: transform 0.2s !important;
+            transition: all 0.3s ease !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: pre-wrap !important; /* Permite quebra de linha */
             margin-bottom: 20px !important;
         }
         
-        /* Hover (Passar o mouse) */
-        div[data-testid="column"] .stButton > button:hover {
-            background-color: #D4AF37 !important; /* Dourado mais claro */
-            color: #000000 !important;            /* Preto Absoluto */
-            transform: scale(1.03) !important;
-            box-shadow: 0 8px 25px rgba(197, 160, 101, 0.4) !important;
-            border-color: #D4AF37 !important;
+        div[data-testid="column"] .stButton button:hover {
+            background-color: #D4AF37 !important; 
+            transform: scale(1.05) !important;
+            box-shadow: 0 10px 30px rgba(197, 160, 101, 0.4) !important;
+            color: #000000 !important;
+            z-index: 999;
         }
 
-        /* --- 3. BOTÕES DE AÇÃO (Salvar, Sair) --- */
+        /* --- BOTÕES DE AÇÃO (Sair, Salvar) --- */
         button[kind="primary"] {
             background-color: #C5A065 !important;
             color: #1E1B18 !important;
             border: none !important;
             font-weight: bold !important;
             text-transform: uppercase;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
         }
         button[kind="primary"]:hover {
             background-color: #E6CFA0 !important;
-            color: #000000 !important;
         }
         
-        /* Botão Voltar (Secundário) */
         button[kind="secondary"] {
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
         }
-        button[kind="secondary"]:hover {
-            border-color: #FFFFFF !important;
-            color: #FFFFFF !important;
-        }
 
-        /* --- 4. INPUTS E CAMPOS DE TEXTO (Fundo Escuro) --- */
-        .stTextInput input, .stSelectbox div[data-baseweb="select"], .stDateInput input, .stTimeInput input, .stTextArea textarea {
+        /* --- INPUTS (Fundo Escuro) --- */
+        .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
             background-color: #3A302C !important; 
-            color: #FFFFFF !important; /* Texto digitado branco */
+            color: #FFFFFF !important;
             border: 1px solid #5C4B3C !important;
-            border-radius: 4px !important;
+            border-radius: 6px !important;
         }
         
-        /* --- 5. COR DOS TÍTULOS DOS CAMPOS (Usuário, Senha) --- */
-        /* Força a cor BRANCA para os labels dos inputs */
-        .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stTextArea label {
+        /* --- LABELS BRANCOS (CRÍTICO PARA O LOGIN) --- */
+        .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label {
             color: #FFFFFF !important;
-            font-size: 16px !important;
+            font-size: 15px !important;
             font-weight: 500 !important;
         }
         
-        /* --- 6. TÍTULOS (H1, H2, H3) --- */
-        h1, h2, h3, h4 {
-            color: #C5A065 !important; /* Dourado */
-            font-weight: 400 !important;
+        /* --- TÍTULOS --- */
+        h1, h2, h3 {
+            color: #C5A065 !important;
         }
         
-        /* --- 7. CARDS/EXPANDERS --- */
+        /* --- CARDS --- */
         [data-testid="stExpander"] {
             background-color: #3A302C !important;
             border: 1px solid #5C4B3C !important;
-            color: #E0E0E0 !important;
-        }
-        /* Texto dentro do expander */
-        [data-testid="stExpander"] p, [data-testid="stExpander"] div {
-            color: #E0E0E0 !important;
-        }
-        
-        /* Ajuste do botão fechar modal/alertas */
-        button[kind="header"] {
-            color: #E0E0E0 !important;
         }
     </style>
     """, unsafe_allow_html=True)
 
 # --- CABEÇALHO ---
 def mostrar_cabecalho():
-    # Centralização
     c1, c2, c3 = st.columns([1, 1, 1])
     with c2:
         try:
@@ -215,25 +198,24 @@ def tela_menu_principal():
     st.write("") 
     st.write("") 
     
-    # --- GRID PERFEITO (2 Colunas, Centralizado) ---
-    # Usando colunas de espaçamento (1) e colunas de conteúdo (2)
-    # Isso centraliza e padroniza a largura
-    col_esq, col_btn1, col_btn2, col_dir = st.columns([1, 2, 2, 1])
+    # --- LAYOUT CENTRALIZADO ---
+    # Colunas com proporções para manter o centro focado
+    c_esq, c_meio_esq, c_meio_dir, c_dir = st.columns([1, 1, 1, 1])
     
-    with col_btn1:
-        # Texto com quebra de linha ajuda a preencher visualmente
+    # Ajuste para telas grandes: usar as colunas do meio
+    with c_meio_esq:
         if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
         if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
         if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
     
-    with col_btn2:
+    with c_meio_dir:
         if st.button("➕\n\nNOVO CADASTRO"): st.session_state['page'] = 'cadastro'
         
         if st.session_state['usuario'].get('perfil') == 'admin':
             if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
         else:
-            # Espaço vazio ocupando o mesmo lugar de um botão
-            st.markdown("<div style='height: 160px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+            # Espaço vazio exato de um botão
+            st.markdown("<div style='height: 220px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
             
         if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
 
