@@ -58,7 +58,7 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
     pdf.cell(200, 10, txt=f"Movimento de Caixa - {data_str}", ln=True, align='C')
     pdf.ln(5)
     
-    # Cabeçalho Tabela (ALTERADO: Hora -> Data)
+    # Cabeçalho Tabela (Data apenas)
     pdf.set_font("Arial", 'B', 10)
     pdf.cell(25, 10, "Data", 1) 
     pdf.cell(20, 10, "Tipo", 1)
@@ -85,7 +85,7 @@ def gerar_pdf_caixa(dados_caixa, data_escolhida):
             total_sai += val
             pdf.set_text_color(200, 0, 0)
             
-        pdf.cell(25, 10, data_mov, 1) # Imprime Data
+        pdf.cell(25, 10, data_mov, 1) 
         pdf.cell(20, 10, item['tipo'], 1)
         pdf.cell(65, 10, desc, 1)
         pdf.cell(30, 10, user, 1)
@@ -166,6 +166,7 @@ def tela_cadastro():
         with col_p:
             st.markdown("### 🩺 Perícia / Audiência")
             tipo_pericia = st.selectbox("Tipo", ["Perícia Médica INSS", "Perícia Judicial", "Audiência", "Prorrogação"])
+            local_pericia = st.text_input("Local da Perícia", value="Agência INSS") # CAMPO NOVO
             data_pericia = st.date_input("Data Perícia", value=None, format="DD/MM/YYYY")
             hora_pericia = st.time_input("Hora Perícia", value=time(8,0))
             check_pericia = st.checkbox("Já compareceu nesta Perícia?")
@@ -173,6 +174,7 @@ def tela_cadastro():
         with col_s:
             st.markdown("### 📋 Avaliação Social")
             st.write("(Assistente Social)")
+            local_social = st.text_input("Local da Avaliação", value="Agência INSS") # CAMPO NOVO
             data_social = st.date_input("Data Avaliação", value=None, format="DD/MM/YYYY")
             hora_social = st.time_input("Hora Avaliação", value=time(8,0))
             check_social = st.checkbox("Já compareceu na Avaliação?")
@@ -202,7 +204,7 @@ def tela_cadastro():
                         status_p = "Compareceu" if check_pericia else "Pendente"
                         supabase.table('agendamentos').insert({
                             "processo_id": proc_id, "tipo_evento": tipo_pericia,
-                            "data_hora": dt_full, "local_cidade": f"{esfera} (A Definir)",
+                            "data_hora": dt_full, "local_cidade": local_pericia,
                             "status_comparecimento": status_p
                         }).execute()
                         
@@ -211,7 +213,7 @@ def tela_cadastro():
                         status_s = "Compareceu" if check_social else "Pendente"
                         supabase.table('agendamentos').insert({
                             "processo_id": proc_id, "tipo_evento": "Avaliação Social",
-                            "data_hora": dt_full_s, "local_cidade": "INSS",
+                            "data_hora": dt_full_s, "local_cidade": local_social,
                             "status_comparecimento": status_s
                         }).execute()
 
@@ -340,7 +342,7 @@ def tela_financeiro():
         
         if filtrados:
             df = pd.DataFrame(filtrados)
-            # Mostra apenas DATA no dataframe
+            # Mostra apenas DATA no dataframe (Horário oculto, mas mantendo ordem)
             df['Data'] = pd.to_datetime(df['data_movimentacao']).dt.strftime('%d/%m/%Y')
             st.dataframe(df[['Data', 'tipo', 'descricao', 'valor', 'usuario_responsavel']], use_container_width=True)
             
