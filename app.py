@@ -17,7 +17,7 @@ except:
     st.warning("⚠️ Configuração de banco de dados não detectada.")
     st.stop()
 
-# --- ESTILO CSS (GEOMETRIA QUADRADA TRAVADA) ---
+# --- ESTILO CSS (ASPECT RATIO 1:1 - QUADRADOS PERFEITOS) ---
 def aplicar_estilo_visual():
     st.markdown("""
     <style>
@@ -33,19 +33,11 @@ def aplicar_estilo_visual():
             color: #E0E0E0;
         }
 
-        /* --- BOTÕES DO MENU PRINCIPAL (QUADRADOS FIXOS) --- */
-        /* Força o container do botão a centralizar o botão */
-        div[data-testid="column"] .stButton {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        /* Estilo do Botão em si */
+        /* --- BOTÕES DO MENU PRINCIPAL (TÉCNICA ASPECT-RATIO) --- */
         div[data-testid="column"] .stButton button {
-            width: 220px !important;      /* LARGURA FIXA */
-            height: 220px !important;     /* ALTURA FIXA (Igual a largura = Quadrado) */
+            width: 100% !important;        /* Ocupa toda a largura da coluna */
+            aspect-ratio: 1 / 1 !important; /* FORÇA SER QUADRADO (Altura = Largura) */
+            height: auto !important;       /* Deixa a altura automática baseada na largura */
             
             background-color: #C5A065 !important; /* DOURADO */
             color: #1E1B18 !important;            /* PRETO/CAFÉ */
@@ -53,8 +45,8 @@ def aplicar_estilo_visual():
             font-size: 18px !important;
             font-weight: 800 !important;
             border: none !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
             
             /* Centralização do Texto */
             display: flex !important;
@@ -66,12 +58,11 @@ def aplicar_estilo_visual():
             text-transform: uppercase;
             letter-spacing: 1px;
             white-space: pre-wrap !important; /* Permite quebra de linha */
-            margin-bottom: 20px !important;
         }
         
         div[data-testid="column"] .stButton button:hover {
             background-color: #D4AF37 !important; 
-            transform: scale(1.05) !important;
+            transform: scale(1.03) !important;
             box-shadow: 0 10px 30px rgba(197, 160, 101, 0.4) !important;
             color: #000000 !important;
             z-index: 999;
@@ -84,6 +75,8 @@ def aplicar_estilo_visual():
             border: none !important;
             font-weight: bold !important;
             text-transform: uppercase;
+            height: 50px !important; /* Altura normal para botões de ação */
+            aspect-ratio: auto !important; /* Desliga o quadrado forçado */
         }
         button[kind="primary"]:hover {
             background-color: #E6CFA0 !important;
@@ -93,9 +86,11 @@ def aplicar_estilo_visual():
             background-color: transparent !important;
             color: #C5A065 !important;
             border: 1px solid #C5A065 !important;
+            height: 50px !important;
+            aspect-ratio: auto !important;
         }
 
-        /* --- INPUTS (Fundo Escuro) --- */
+        /* --- INPUTS E LABELS --- */
         .stTextInput input, .stSelectbox div, .stDateInput input, .stTimeInput input, .stTextArea textarea {
             background-color: #3A302C !important; 
             color: #FFFFFF !important;
@@ -103,19 +98,19 @@ def aplicar_estilo_visual():
             border-radius: 6px !important;
         }
         
-        /* --- LABELS BRANCOS (CRÍTICO PARA O LOGIN) --- */
+        /* Cor Branca para Títulos dos Campos (Login) */
         .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label {
             color: #FFFFFF !important;
             font-size: 15px !important;
             font-weight: 500 !important;
         }
         
-        /* --- TÍTULOS --- */
+        /* Títulos Dourados */
         h1, h2, h3 {
             color: #C5A065 !important;
         }
         
-        /* --- CARDS --- */
+        /* Cards */
         [data-testid="stExpander"] {
             background-color: #3A302C !important;
             border: 1px solid #5C4B3C !important;
@@ -198,31 +193,40 @@ def tela_menu_principal():
     st.write("") 
     st.write("") 
     
-    # --- LAYOUT CENTRALIZADO ---
-    # Colunas com proporções para manter o centro focado
-    c_esq, c_meio_esq, c_meio_dir, c_dir = st.columns([1, 1, 1, 1])
+    # --- LAYOUT DE GRADE ALINHADA ---
+    # Usamos 3 colunas: [Espaço, Conteúdo, Espaço]
+    # O 'Conteúdo' terá largura fixa proporcional (3 partes)
+    # Isso centraliza tudo na tela.
+    c_esq, c_centro, c_dir = st.columns([1, 2, 1])
     
-    # Ajuste para telas grandes: usar as colunas do meio
-    with c_meio_esq:
-        if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
-        if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
-        if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
-    
-    with c_meio_dir:
-        if st.button("➕\n\nNOVO CADASTRO"): st.session_state['page'] = 'cadastro'
+    with c_centro:
+        # Dentro do centro, criamos 2 colunas para os botões
+        # Gap large garante espaçamento bonito
+        col1, col2 = st.columns(2, gap="large")
         
-        if st.session_state['usuario'].get('perfil') == 'admin':
-            if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
-        else:
-            # Espaço vazio exato de um botão
-            st.markdown("<div style='height: 220px; margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+        with col1:
+            if st.button("📅\n\nAGENDAMENTOS"): st.session_state['page'] = 'agenda'
+            if st.button("🔍\n\nBUSCAR / EDITAR"): st.session_state['page'] = 'busca'
+            if st.button("💰\n\nFINANCEIRO"): st.session_state['page'] = 'financeiro'
             
-        if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
+        with col2:
+            if st.button("➕\n\nNOVO CADASTRO"): st.session_state['page'] = 'cadastro'
+            
+            # Botão de Usuários (Admin) ou Vazio (Layout)
+            if st.session_state['usuario'].get('perfil') == 'admin':
+                if st.button("👥\n\nUSUÁRIOS"): st.session_state['page'] = 'usuarios'
+            else:
+                # Criamos um "botão fantasma" transparente e não clicável para manter o quadrado
+                st.markdown("""
+                <div style="width:100%; aspect-ratio:1/1; margin-bottom:16px;"></div>
+                """, unsafe_allow_html=True)
+                
+            if st.button("🔒\n\nMINHA SENHA"): st.session_state['page'] = 'senha'
 
     st.write("")
     st.write("")
     
-    # Botão Sair centralizado
+    # Botão Sair
     c1, c2, c3 = st.columns([1,1,1])
     with c2:
         if st.button("SAIR DO SISTEMA", type="primary", use_container_width=True): 
